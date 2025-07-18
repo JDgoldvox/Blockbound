@@ -1,0 +1,30 @@
+📜 Blockbound Ownership License
+Blockbound – Ownership Declaration
+© VoxStudios 2025
+
+This license affirms that all content related to the project titled Blockbound — including but not limited to source code, artwork, music, designs, narrative, and any associated media — is the sole property of VoxStudios.
+
+🚫 Restrictions
+No person, group, or entity is permitted to:
+
+Copy, reproduce, or redistribute the source code of Blockbound
+
+Use any part of the game’s assets, visuals, music, or name for their own projects
+
+Create derivative works based on Blockbound
+
+Use the name “Blockbound” in connection with any product, service, or project
+
+...without prior written permission from VoxStudios.
+
+✅ Rights Reserved
+VoxStudios retains exclusive ownership and full rights to:
+
+Use, distribute, license, or sell Blockbound in any form
+
+Enforce these terms through legal action if necessary
+
+Grant or deny permission to individuals or organizations requesting use of Blockbound's code or assets
+
+This license is non-transferable and applies globally.
+
