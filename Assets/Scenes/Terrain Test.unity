@@ -1086,14 +1086,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tileMap: {fileID: 1962034617}
-  stone: {fileID: 11400000, guid: da1a703a3ad3f6a4abcec778af450e5f, type: 2}
-  blue: {fileID: 11400000, guid: 2124873f9be59ff4dba4878e63d9d8ca, type: 2}
-  orange: {fileID: 11400000, guid: b5cead9f555131d4dbb61b8938216b7a, type: 2}
-  grass: {fileID: 11400000, guid: 01900b0c27192b14a935e986d3f8fbc3, type: 2}
-  dirt: {fileID: 11400000, guid: e86bde09eaa16664eb5e1ca9308900e7, type: 2}
-  _width: 10
-  _height: 10
-  _mainWorldStoneSO: {fileID: 11400000, guid: 7c48b32f56b8b3448b70f63d31231382, type: 2}
+  stone: {fileID: 11400000, guid: d39b6a3892100554aae009ce2cd35275, type: 2}
+  copper: {fileID: 11400000, guid: c33aaa92aea1b014394b54ef0c86474f, type: 2}
+  iron: {fileID: 11400000, guid: 07aff6549b919c14ba3a1db96f5532ad, type: 2}
+  grass: {fileID: 11400000, guid: 3362d72a0c97a15499f53ab367fac001, type: 2}
+  dirt: {fileID: 11400000, guid: db6d32435dd5a1048ab9d0042b190b25, type: 2}
+  _width: 1000
+  _height: 1000
+  _everlastingEdenStoneSO: {fileID: 11400000, guid: 7c48b32f56b8b3448b70f63d31231382, type: 2}
+  _everlastingEdenOreSO: {fileID: 11400000, guid: 8073720b3f409f949bdc76042b073cef, type: 2}
 --- !u!4 &1246602119
 Transform:
   m_ObjectHideFlags: 0
@@ -1342,15 +1343,39 @@ Tilemap:
   m_Enabled: 1
   m_Tiles: {}
   m_AnimatedTiles: {}
-  m_TileAssetArray: []
-  m_TileSpriteArray: []
-  m_TileMatrixArray: []
-  m_TileColorArray: []
+  m_TileAssetArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileSpriteArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileMatrixArray:
+  - m_RefCount: 0
+    m_Data:
+      e00: 2.35e-43
+      e01: 0
+      e02: 1e-45
+      e03: 5.1499686e-19
+      e10: 0
+      e11: 0
+      e12: 0
+      e13: 8.42e-43
+      e20: -0.00008418679
+      e21: 5.1499686e-19
+      e22: 1.7190804e+29
+      e23: -2.0995274e-23
+      e30: 4.5907e-41
+      e31: 8.42e-43
+      e32: 8.45e-43
+      e33: 8.42e-43
+  m_TileColorArray:
+  - m_RefCount: 0
+    m_Data: {r: -2.0995211e-23, g: -2.0995211e-23, b: -2.0995211e-23, a: -2.0995211e-23}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: 0, y: 0, z: 0}
-  m_Size: {x: 0, y: 0, z: 1}
+  m_Origin: {x: -6, y: 0, z: 0}
+  m_Size: {x: 17, y: 7, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:

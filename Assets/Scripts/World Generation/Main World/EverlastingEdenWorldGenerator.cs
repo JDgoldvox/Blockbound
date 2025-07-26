@@ -14,7 +14,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
     [SerializeField] private Tilemap _tileMap;
     
     private Dictionary<Vector3Int, Tile> _blocks;
-    public Tile stone, blue, orange, grass, dirt;
+    public Tile stone, copper, iron, grass, dirt;
     private int _totalBlocks;
     private float _tempTimer = 0;
     
@@ -23,7 +23,8 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
     [SerializeField] private int _height;
 
     [Header("Stone World Generator")] 
-    [SerializeField] private EverlastingEdenStoneSO _mainWorldStoneSO; 
+    [SerializeField] private EverlastingEdenStoneSO _everlastingEdenStoneSO; 
+    [SerializeField] private EverlastingEdenOreSO _everlastingEdenOreSO; 
 
     private void Awake()
     {
@@ -42,6 +43,9 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         
         //Generate stone
         GenerateStoneLayer(tileTypeMap);
+        
+        //Generate Ore
+        GenerateOreLayer(tileTypeMap);
         
         //main thread map build
         BuildTileMap(tileTypeMap);
@@ -73,7 +77,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
                     _tileMap.SetTile(tilePos, stone);
                     break;
                 case 2: 
-                    _tileMap.SetTile(tilePos, blue);
+                    _tileMap.SetTile(tilePos, copper);
                     break;
             }
         }
@@ -82,16 +86,16 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
     private void GenerateStoneLayer(NativeArray<int> tileTypeMap)
     {
         // stone base structure
-        if (_mainWorldStoneSO._enableStoneBase)
+        if (_everlastingEdenStoneSO._enableStoneBase)
         {
             var stoneBaseJob = new EverlastingEdenGenerationJobs.StoneBaseGenerationJob()
             {
                 width = _width,
-                frequency = _mainWorldStoneSO._stoneBaseFrequency,
-                persistance = _mainWorldStoneSO._stoneBasePersistance,
-                octaves = _mainWorldStoneSO._stoneBaseOctaves,
-                amplitude = _mainWorldStoneSO._stoneBaseAmplitude,
-                stoneChance = _mainWorldStoneSO._stoneBaseChance,
+                frequency = _everlastingEdenStoneSO._stoneBaseFrequency,
+                persistance = _everlastingEdenStoneSO._stoneBasePersistance,
+                octaves = _everlastingEdenStoneSO._stoneBaseOctaves,
+                amplitude = _everlastingEdenStoneSO._stoneBaseAmplitude,
+                stoneChance = _everlastingEdenStoneSO._stoneBaseChance,
                 tileTypeMap = tileTypeMap
             };
 
@@ -101,16 +105,16 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         }
 
         //stone detail layer
-        if (_mainWorldStoneSO._enableStoneDetail)
+        if (_everlastingEdenStoneSO._enableStoneDetail)
         {
             var stoneDetailJob = new EverlastingEdenGenerationJobs.StoneDetailGenerationJob()
             {
                 width = _width,
-                frequency = _mainWorldStoneSO._stoneDetailFrequency,
-                persistance = _mainWorldStoneSO._stoneDetailPersistance,
-                octaves =  _mainWorldStoneSO._stoneDetailOctaves,
-                amplitude = _mainWorldStoneSO._stoneDetailAmplitude,
-                stoneChance = _mainWorldStoneSO._stoneDetailChance,
+                frequency = _everlastingEdenStoneSO._stoneDetailFrequency,
+                persistance = _everlastingEdenStoneSO._stoneDetailPersistance,
+                octaves =  _everlastingEdenStoneSO._stoneDetailOctaves,
+                amplitude = _everlastingEdenStoneSO._stoneDetailAmplitude,
+                stoneChance = _everlastingEdenStoneSO._stoneDetailChance,
                 tileTypeMap = tileTypeMap
             };
             
@@ -119,22 +123,43 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             stoneDetailJobHandler.Complete();
         }
         
-        if (_mainWorldStoneSO._enableStoneTunnel)
+        if (_everlastingEdenStoneSO._enableStoneTunnel)
         {
             var stoneTunnelJob = new EverlastingEdenGenerationJobs.StoneTunnelGenerationJob()
             {
                 width = _width,
-                frequency = _mainWorldStoneSO._stoneTunnelFrequency,
-                persistance = _mainWorldStoneSO._stoneTunnelPersistance,
-                octaves = _mainWorldStoneSO._stoneTunnelOctaves,
-                amplitude = _mainWorldStoneSO._stoneTunnelAmplitude,
-                stoneChance = _mainWorldStoneSO._stoneTunnelChance,
+                frequency = _everlastingEdenStoneSO._stoneTunnelFrequency,
+                persistance = _everlastingEdenStoneSO._stoneTunnelPersistance,
+                octaves = _everlastingEdenStoneSO._stoneTunnelOctaves,
+                amplitude = _everlastingEdenStoneSO._stoneTunnelAmplitude,
+                stoneChance = _everlastingEdenStoneSO._stoneTunnelChance,
                 tileTypeMap = tileTypeMap
             };
 
             JobHandle stoneTunnelJobHandler = default;
             stoneTunnelJobHandler = stoneTunnelJob.ScheduleParallelByRef(_totalBlocks, 120, stoneTunnelJobHandler);
             stoneTunnelJobHandler.Complete();
+        }
+    }
+
+    private void GenerateOreLayer(NativeArray<int> tileTypeMap)
+    {
+        if (_everlastingEdenOreSO._enableCopper)
+        {
+            var copperJob = new EverlastingEdenGenerationJobs.CopperGenerationJob()
+            {
+                width = _width,
+                frequency = _everlastingEdenStoneSO._stoneBaseFrequency,
+                persistance = _everlastingEdenStoneSO._stoneBasePersistance,
+                octaves = _everlastingEdenStoneSO._stoneBaseOctaves,
+                amplitude = _everlastingEdenStoneSO._stoneBaseAmplitude,
+                chance = _everlastingEdenStoneSO._stoneBaseChance,
+                tileTypeMap = tileTypeMap
+            };
+
+            JobHandle copperJobHandler = default;
+            copperJobHandler = copperJob.ScheduleParallelByRef(_totalBlocks, 128, copperJobHandler);
+            copperJobHandler.Complete();
         }
     }
 };

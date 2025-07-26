@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: cc1a1b098e7356942b3c4d2a9d60c1b4
+guid: fd132c326c8b6c845b3bd475d73a6c60
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2217638906192892890
-    second: blocks_0
+      213: 4099553507100660859
+    second: EverlastingEdenBackgrounds_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,11 +100,11 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: blocks_0
+      name: EverlastingEdenBackgrounds_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 64
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -115,18 +115,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 62c69441a2d5931e0800000000000000
-      internalID: -2217638906192892890
+      spriteID: b741170c13a84e830800000000000000
+      internalID: 4099553507100660859
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blocks_1
+      name: EverlastingEdenBackgrounds_1
       rect:
         serializedVersion: 2
         x: 16
-        y: 64
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -137,18 +137,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f9f14f5547e832c48a902efe567013f8
-      internalID: -1297085294
+      spriteID: 634a1bbb11c4aba4f9113a7653951d63
+      internalID: -1197215495
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blocks_2
+      name: EverlastingEdenBackgrounds_2
       rect:
         serializedVersion: 2
         x: 32
-        y: 64
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -159,18 +159,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ed109bc3fce15f848812f6aa73802ec3
-      internalID: 1971329646
+      spriteID: 0adeedc45581a474483cb8a5247c3266
+      internalID: 985671603
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blocks_3
+      name: EverlastingEdenBackgrounds_3
       rect:
         serializedVersion: 2
         x: 48
-        y: 64
+        y: 112
         width: 16
         height: 16
       alignment: 0
@@ -181,30 +181,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6db49688a1686c544993e45ece5f80f2
-      internalID: -2092877044
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: blocks_4
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 64
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 37b891852e1336f4ea61cf7edca9c961
-      internalID: -314774306
+      spriteID: dba5114d31d86264aa438221165c49a5
+      internalID: 2119674473
       vertices: []
       indices: 
       edges: []
@@ -213,7 +191,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: e603c5bf3d497a84c866d543eda155aa
+    spriteID: 9dc51c60bbc90cb41a4aee61faa048ce
     internalID: 0
     vertices: []
     indices: 
@@ -223,11 +201,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      blocks_0: -2217638906192892890
-      blocks_1: -1297085294
-      blocks_2: 1971329646
-      blocks_3: -2092877044
-      blocks_4: -314774306
+      EverlastingEdenBackgrounds_0: 4099553507100660859
+      EverlastingEdenBackgrounds_1: -1197215495
+      EverlastingEdenBackgrounds_2: 985671603
+      EverlastingEdenBackgrounds_3: 2119674473
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

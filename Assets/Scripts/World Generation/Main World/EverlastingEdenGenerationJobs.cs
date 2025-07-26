@@ -5,9 +5,9 @@ using Unity.Collections;
 
 namespace EverlastingEdenGenerationJobs
 {
-    #region MyRegion
+    #region Stone
 
-     [BurstCompile]
+    [BurstCompile]
     public struct StoneBaseGenerationJob : IJobFor
     {
         [ReadOnly] public float frequency;
@@ -87,5 +87,32 @@ namespace EverlastingEdenGenerationJobs
 
     #endregion Stone
     
+   #region Ore
    
+   public struct CopperGenerationJob : IJobFor
+   {
+       [ReadOnly] public float frequency;
+       [ReadOnly] public float persistance;
+       [ReadOnly] public int octaves;
+       [ReadOnly] public int width;
+       [ReadOnly] public float amplitude;
+       [ReadOnly] public float chance;
+        
+       public NativeArray<int> tileTypeMap;
+        
+       public void Execute(int index)
+       {
+           int x =  index % width;
+           int y =  index / width;
+            
+           float rng = NoiseUtils.OctaveSimplexNoise(x, y, octaves, persistance, frequency, amplitude);
+
+           if (rng < chance)
+           {
+               tileTypeMap[index] = 2;
+           }
+       }
+   }
+   
+   #endregion
 }
