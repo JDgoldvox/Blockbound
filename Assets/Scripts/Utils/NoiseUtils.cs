@@ -2,11 +2,12 @@ using System;
 using UnityEngine;
 using Unity.Burst;
 using Unity.Mathematics;
+using Unity.Collections;
     
 [BurstCompile]
 public static class NoiseUtils
 {
-    private static int _truePositiveOffset = 10000;
+    private static readonly int _truePositiveOffset = 10000;
     
     public static float OctavePerlinNoise(float x, float y, int octaves, float persistence, float frequency, float amplitude)
     {
@@ -35,13 +36,20 @@ public static class NoiseUtils
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
             total += (Unity.Mathematics.noise.cellular(coordinate).y - Unity.Mathematics.noise.cellular(coordinate).x) * amplitude;
-            
+
             maxValue += amplitude;
             amplitude *= persistence;
             frequency *= 2;
         }
+
+        float rng = total / maxValue;
         
-        return total / maxValue;
+        if (rng > -0.15f && rng < 0.5f)
+        {
+            return total / maxValue;
+        }
+        
+        return 0;
     }
     
     public static float OctaveWorleyNoise(float x, float y, int octaves, float persistence, float frequency, float amplitude)

@@ -3,9 +3,11 @@ using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 
-namespace MainWorldGenerationJobs
+namespace EverlastingEdenGenerationJobs
 {
-    [BurstCompile]
+    #region MyRegion
+
+     [BurstCompile]
     public struct StoneBaseGenerationJob : IJobFor
     {
         [ReadOnly] public float frequency;
@@ -13,6 +15,7 @@ namespace MainWorldGenerationJobs
         [ReadOnly] public int octaves;
         [ReadOnly] public int width;
         [ReadOnly] public float amplitude;
+        [ReadOnly] public float stoneChance;
         
         public NativeArray<int> tileTypeMap;
         
@@ -21,9 +24,9 @@ namespace MainWorldGenerationJobs
             int x =  index % width;
             int y =  index / width;
             
-            float chance = NoiseUtils.OctaveSimplexNoise(x, y, octaves, persistance, frequency, amplitude);
+            float rng = NoiseUtils.OctaveSimplexNoise(x, y, octaves, persistance, frequency, amplitude);
 
-            if (chance < 0.5f)
+            if (rng < stoneChance)
             {
                 tileTypeMap[index] = 1;
             }
@@ -38,6 +41,7 @@ namespace MainWorldGenerationJobs
         [ReadOnly] public int octaves;
         [ReadOnly] public int width;
         [ReadOnly] public float amplitude;
+        [ReadOnly] public float stoneChance;
         
         public NativeArray<int> tileTypeMap;
         
@@ -46,23 +50,24 @@ namespace MainWorldGenerationJobs
             int x =  index % width;
             int y =  index / width;
             
-            float chance = NoiseUtils.OctavePerlinNoise(x, y, octaves, persistance, frequency, amplitude);
+            float rng = NoiseUtils.OctavePerlinNoise(x, y, octaves, persistance, frequency, amplitude);
 
-            if (chance < 0.1f)
+            if (rng < stoneChance)
             {
-                tileTypeMap[index] = 1;
+                tileTypeMap[index] = 0;
             }
         }
     }
     
     [BurstCompile]
-    public struct StoneTunnelsGenerationJob : IJobFor
+    public struct StoneTunnelGenerationJob : IJobFor
     {
         [ReadOnly] public float frequency;
         [ReadOnly] public float persistance;
         [ReadOnly] public int octaves;
         [ReadOnly] public int width;
         [ReadOnly] public float amplitude;
+        [ReadOnly] public float stoneChance;
         
         public NativeArray<int> tileTypeMap;
         
@@ -73,10 +78,14 @@ namespace MainWorldGenerationJobs
             
             float chance = NoiseUtils.OctaveWorleyBoundryNoise(x, y, octaves, persistance, frequency, amplitude);
 
-            if (chance < 0.1f)
+            if (chance < stoneChance)
             {
-                tileTypeMap[index] = 1;
+                tileTypeMap[index] = 0;
             }
         }
     }
+
+    #endregion Stone
+    
+   
 }

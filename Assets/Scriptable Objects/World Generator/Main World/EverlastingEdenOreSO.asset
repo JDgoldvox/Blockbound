@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d95ff7dd4613cf845805487ccaf53933, type: 3}
+  m_Name: EverlastingEdenOreSO
+  m_EditorClassIdentifier: 
+  _enableCopper: 0
+  _copperFrequency: 1
+  _copperPersistance: 1
+  _copperOctaves: 1
+  _copperAmplitude: 2
+  _copperChance: 0
+  _enableIron: 0
+  _ironFrequency: 1
+  _ironPersistance: 1
+  _ironOctaves: 1
+  _ironAmplitude: 2
+  _ironChance: 0
