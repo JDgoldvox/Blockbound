@@ -7,6 +7,7 @@ using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using EverlastingEdenGenerationJobs;
+using Unity.Jobs.LowLevel.Unsafe;
 
 [BurstCompile]
 public class EverlastingEdenWorldGenerator : MonoBehaviour
@@ -14,7 +15,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
     [SerializeField] private Tilemap _tileMap;
     
     private Dictionary<Vector3Int, Tile> _blocks;
-    public Tile stone, copper, iron, grass, dirt;
+    public Tile debugBlock, stone, copper, iron, grass, dirt;
     private int _totalBlocks;
     private float _tempTimer = 0;
     
@@ -39,7 +40,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         var stopwatch = Stopwatch.StartNew();
         _tileMap.ClearAllTiles();
         
-        NativeArray<int> tileTypeMap = new NativeArray<int>(_totalBlocks, Allocator.TempJob, NativeArrayOptions.ClearMemory);
+        NativeArray<int> tileTypeMap = new NativeArray<int>(_totalBlocks, Allocator.TempJob);
         
         //Generate stone
         GenerateStoneLayer(tileTypeMap);
@@ -70,6 +71,9 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             
             switch (tile)
             {
+                case -1:
+                    _tileMap.SetTile(tilePos, debugBlock);
+                    break;
                 case 0:
                     _tileMap.SetTile(tilePos, null);
                     break;
@@ -90,13 +94,13 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         {
             var stoneBaseJob = new EverlastingEdenGenerationJobs.StoneBaseGenerationJob()
             {
-                width = _width,
-                frequency = _everlastingEdenStoneSO._stoneBaseFrequency,
-                persistance = _everlastingEdenStoneSO._stoneBasePersistance,
-                octaves = _everlastingEdenStoneSO._stoneBaseOctaves,
-                amplitude = _everlastingEdenStoneSO._stoneBaseAmplitude,
-                stoneChance = _everlastingEdenStoneSO._stoneBaseChance,
-                tileTypeMap = tileTypeMap
+                Width = _width,
+                Frequency = _everlastingEdenStoneSO.StoneBaseFrequency,
+                Persistance = _everlastingEdenStoneSO.StoneBasePersistance,
+                Octaves = _everlastingEdenStoneSO.StoneBaseOctaves,
+                Amplitude = _everlastingEdenStoneSO.StoneBaseAmplitude,
+                StoneChance = _everlastingEdenStoneSO.StoneBaseChance,
+                TileTypeMap = tileTypeMap
             };
 
             JobHandle stoneBaseJobHandler = default;
@@ -109,13 +113,13 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         {
             var stoneDetailJob = new EverlastingEdenGenerationJobs.StoneDetailGenerationJob()
             {
-                width = _width,
-                frequency = _everlastingEdenStoneSO._stoneDetailFrequency,
-                persistance = _everlastingEdenStoneSO._stoneDetailPersistance,
-                octaves =  _everlastingEdenStoneSO._stoneDetailOctaves,
-                amplitude = _everlastingEdenStoneSO._stoneDetailAmplitude,
-                stoneChance = _everlastingEdenStoneSO._stoneDetailChance,
-                tileTypeMap = tileTypeMap
+                Width = _width,
+                Frequency = _everlastingEdenStoneSO.StoneDetailFrequency,
+                Persistance = _everlastingEdenStoneSO.StoneDetailPersistance,
+                Octaves =  _everlastingEdenStoneSO.StoneDetailOctaves,
+                Amplitude = _everlastingEdenStoneSO.StoneDetailAmplitude,
+                StoneChance = _everlastingEdenStoneSO.StoneDetailChance,
+                TileTypeMap = tileTypeMap
             };
             
             JobHandle stoneDetailJobHandler = default;
@@ -128,12 +132,12 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             var stoneTunnelJob = new EverlastingEdenGenerationJobs.StoneTunnelGenerationJob()
             {
                 width = _width,
-                frequency = _everlastingEdenStoneSO._stoneTunnelFrequency,
-                persistance = _everlastingEdenStoneSO._stoneTunnelPersistance,
-                octaves = _everlastingEdenStoneSO._stoneTunnelOctaves,
-                amplitude = _everlastingEdenStoneSO._stoneTunnelAmplitude,
-                stoneChance = _everlastingEdenStoneSO._stoneTunnelChance,
-                tileTypeMap = tileTypeMap
+                Frequency = _everlastingEdenStoneSO.StoneTunnelFrequency,
+                Persistance = _everlastingEdenStoneSO.StoneTunnelPersistance,
+                Octaves = _everlastingEdenStoneSO.StoneTunnelOctaves,
+                Amplitude = _everlastingEdenStoneSO.StoneTunnelAmplitude,
+                StoneChance = _everlastingEdenStoneSO.StoneTunnelChance,
+                TileTypeMap = tileTypeMap
             };
 
             JobHandle stoneTunnelJobHandler = default;
@@ -144,22 +148,38 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
 
     private void GenerateOreLayer(NativeArray<int> tileTypeMap)
     {
-        if (_everlastingEdenOreSO._enableCopper)
-        {
-            var copperJob = new EverlastingEdenGenerationJobs.CopperGenerationJob()
-            {
-                width = _width,
-                frequency = _everlastingEdenStoneSO._stoneBaseFrequency,
-                persistance = _everlastingEdenStoneSO._stoneBasePersistance,
-                octaves = _everlastingEdenStoneSO._stoneBaseOctaves,
-                amplitude = _everlastingEdenStoneSO._stoneBaseAmplitude,
-                chance = _everlastingEdenStoneSO._stoneBaseChance,
-                tileTypeMap = tileTypeMap
-            };
+        System.Random baseSeedGenerator = new System.Random();
 
-            JobHandle copperJobHandler = default;
-            copperJobHandler = copperJob.ScheduleParallelByRef(_totalBlocks, 128, copperJobHandler);
-            copperJobHandler.Complete();
+        if (_everlastingEdenOreSO.EnableCopper)
+        {
+            List<NativeList<Vector2Int>> threadedOreResults = new List<NativeList<Vector2Int>>();
+            int numJobs = JobsUtility.JobWorkerCount + 1;
+            NativeArray<JobHandle> handles = new NativeArray<JobHandle>(numJobs,  Allocator.TempJob);
+            
+            for (int i = 0; i < numJobs; i++)
+            {
+                threadedOreResults.Add(new NativeList<Vector2Int>(Allocator.TempJob));
+
+                var copperJob = new EverlastingEdenGenerationJobs.CopperLargeGenerationJob()
+                {
+                    BaseSeed = (uint)baseSeedGenerator.Next(1, int.MaxValue) | 1,
+                    Width = _width,
+                    Height = _height,
+                    SpreadChance = _everlastingEdenOreSO.CopperLargeVeinSpreadChance,
+                    TileTypeMap = tileTypeMap, //This is for reference for surroundings
+                    NewOre = threadedOreResults[i]
+                };
+
+                handles[i] = copperJob.ScheduleParallel(1, 1, default);
+            }
+            
+            JobHandle.CompleteAll(handles);
+            
+            
+            
+            
+            //dispose handles
+            //dispose native arrays
         }
     }
 };

@@ -13,11 +13,14 @@ public static class NoiseUtils
     {
         float total = 0;
         float maxValue = 0;
+        float tempValue = 0;
 
         for (int i = 0; i < octaves; i++)
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
-            total += Unity.Mathematics.noise.pnoise(coordinate , new float2(100000f,100000)) * amplitude;
+            tempValue = Unity.Mathematics.noise.pnoise(coordinate, new float2(100000f, 100000)) * amplitude;
+            tempValue = (tempValue + 1f) / 2f;
+            total += tempValue;
             
             maxValue += amplitude;
             amplitude *= persistence;
@@ -31,36 +34,35 @@ public static class NoiseUtils
     {
         float total = 0;
         float maxValue = 0;
+        float tempValue = 0;
 
         for (int i = 0; i < octaves; i++)
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
-            total += (Unity.Mathematics.noise.cellular(coordinate).y - Unity.Mathematics.noise.cellular(coordinate).x) * amplitude;
+            tempValue = (Unity.Mathematics.noise.cellular(coordinate).y - Unity.Mathematics.noise.cellular(coordinate).x) * amplitude;
+            tempValue = (tempValue + 1f) / 2f;
+            total += tempValue;
 
             maxValue += amplitude;
             amplitude *= persistence;
             frequency *= 2;
         }
 
-        float rng = total / maxValue;
-        
-        if (rng > -0.15f && rng < 0.5f)
-        {
-            return total / maxValue;
-        }
-        
-        return 0;
+        return total / maxValue;
     }
     
     public static float OctaveWorleyNoise(float x, float y, int octaves, float persistence, float frequency, float amplitude)
     {
         float total = 0;
         float maxValue = 0;
+        float tempValue = 0;
 
         for (int i = 0; i < octaves; i++)
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
-            total += (Unity.Mathematics.noise.cellular(coordinate).y - Unity.Mathematics.noise.cellular(coordinate).x) * amplitude;
+            tempValue = (Unity.Mathematics.noise.cellular(coordinate).y - Unity.Mathematics.noise.cellular(coordinate).x) * amplitude;
+            tempValue = (tempValue + 1f) / 2f;
+            total += tempValue;
             
             maxValue += amplitude;
             amplitude *= persistence;
@@ -74,11 +76,14 @@ public static class NoiseUtils
     {
         float total = 0;
         float maxValue = 0;
+        float tempValue = 0;
 
         for (int i = 0; i < octaves; i++)
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
-            total += Unity.Mathematics.noise.snoise(coordinate) * amplitude;
+            tempValue = Unity.Mathematics.noise.snoise(coordinate) * amplitude;
+            tempValue = (tempValue + 1f) / 2f;
+            total += tempValue;
             
             maxValue += amplitude;
             amplitude *= persistence;

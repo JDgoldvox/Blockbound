@@ -12,15 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d95ff7dd4613cf845805487ccaf53933, type: 3}
   m_Name: EverlastingEdenOreSO
   m_EditorClassIdentifier: 
-  _enableCopper: 1
-  _copperFrequency: 0.02
-  _copperPersistance: 1
-  _copperOctaves: 1
-  _copperAmplitude: 2
-  _copperChance: 0.1
+  EnableCopper: 0
+  CopperQuantity: 0
   _enableIron: 0
-  _ironFrequency: 1
-  _ironPersistance: 1
-  _ironOctaves: 1
-  _ironAmplitude: 2
-  _ironChance: 0
+  IronQuantity: 0

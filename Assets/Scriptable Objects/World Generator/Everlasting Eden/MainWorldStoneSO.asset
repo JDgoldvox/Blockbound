@@ -13,20 +13,20 @@ MonoBehaviour:
   m_Name: MainWorldStoneSO
   m_EditorClassIdentifier: 
   _enableStoneBase: 1
-  _stoneBaseFrequency: 0.01
-  _stoneBasePersistance: 0.4
-  _stoneBaseOctaves: 5
-  _stoneBaseAmplitude: 1
-  _stoneBaseChance: 0.3
-  _enableStoneDetail: 0
-  _stoneDetailFrequency: 0.01
-  _stoneDetailPersistance: 0.4
-  _stoneDetailOctaves: 5
-  _stoneDetailAmplitude: 1
-  _stoneDetailChance: 0.001
+  StoneBaseFrequency: 0.005
+  StoneBasePersistance: 0.8
+  StoneBaseOctaves: 4
+  StoneBaseAmplitude: 1.1
+  StoneBaseChance: 0.7
+  _enableStoneDetail: 1
+  StoneDetailFrequency: 0.02
+  StoneDetailPersistance: 0.7
+  StoneDetailOctaves: 3
+  StoneDetailAmplitude: 2
+  StoneDetailChance: 0.2
   _enableStoneTunnel: 1
-  _stoneTunnelFrequency: 0.005
-  _stoneTunnelPersistance: 0.8
-  _stoneTunnelOctaves: 3
-  _stoneTunnelAmplitude: 1
-  _stoneTunnelChance: 0.1
+  StoneTunnelFrequency: 0.003
+  StoneTunnelPersistance: 0.75
+  StoneTunnelOctaves: 4
+  StoneTunnelAmplitude: 1
+  StoneTunnelChance: 0.77
