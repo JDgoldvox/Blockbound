@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Diagnostics;
+using System.Linq;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using EverlastingEdenGenerationJobs;
 using Unity.Jobs.LowLevel.Unsafe;
+using Debug = UnityEngine.Debug;
 
 [BurstCompile]
 public class EverlastingEdenWorldGenerator : MonoBehaviour
@@ -131,7 +133,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         {
             var stoneTunnelJob = new EverlastingEdenGenerationJobs.StoneTunnelGenerationJob()
             {
-                width = _width,
+                Width = _width,
                 Frequency = _everlastingEdenStoneSO.StoneTunnelFrequency,
                 Persistance = _everlastingEdenStoneSO.StoneTunnelPersistance,
                 Octaves = _everlastingEdenStoneSO.StoneTunnelOctaves,
@@ -145,41 +147,77 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             stoneTunnelJobHandler.Complete();
         }
     }
-
+    
     private void GenerateOreLayer(NativeArray<int> tileTypeMap)
     {
         System.Random baseSeedGenerator = new System.Random();
-
+        uint seed = (uint)baseSeedGenerator.Next(1, int.MaxValue) | 1;
+        var rng = new Unity.Mathematics.Random(seed);
+        int halfWidth = _width / 2;
+        
         if (_everlastingEdenOreSO.EnableCopper)
         {
-            List<NativeList<Vector2Int>> threadedOreResults = new List<NativeList<Vector2Int>>();
-            int numJobs = JobsUtility.JobWorkerCount + 1;
-            NativeArray<JobHandle> handles = new NativeArray<JobHandle>(numJobs,  Allocator.TempJob);
-            
-            for (int i = 0; i < numJobs; i++)
+            for (int i = 0; i < _everlastingEdenOreSO.CopperLargeVeinQuantity; i++)
             {
-                threadedOreResults.Add(new NativeList<Vector2Int>(Allocator.TempJob));
-
-                var copperJob = new EverlastingEdenGenerationJobs.CopperLargeGenerationJob()
+                Queue<Vector2Int> tileQueue = new Queue<Vector2Int>();
+                HashSet<Vector2Int> visitedTiles = new HashSet<Vector2Int>();
+                
+                //generate random start position within the layer
+                int rngX = rng.NextInt(-halfWidth, halfWidth);
+                int rngY = rng.NextInt(0, _height);
+                Vector2Int startPosition = new Vector2Int(rngX, rngY);
+                tileQueue.Enqueue(startPosition);
+                int tileCount = 0;
+                
+                while (tileQueue.Count != 0) //start flood fill algorithm
                 {
-                    BaseSeed = (uint)baseSeedGenerator.Next(1, int.MaxValue) | 1,
-                    Width = _width,
-                    Height = _height,
-                    SpreadChance = _everlastingEdenOreSO.CopperLargeVeinSpreadChance,
-                    TileTypeMap = tileTypeMap, //This is for reference for surroundings
-                    NewOre = threadedOreResults[i]
-                };
+                    Vector2Int tilePos = tileQueue.Dequeue();
+                    
+                    //if this position is not stone , continue, skip
+                    if (!TilemapUtils.IsSpecificTile(tilePos, 1, tileTypeMap, _width))
+                    {
+                        continue;
+                    }
+                    
+                    //if reached max tiles for this ore vein, return
+                    tileCount++;
+                    visitedTiles.Add(tilePos);
+                    tileTypeMap[TilemapConverter.CoordToIndex(tilePos, _width)] = 2;
 
-                handles[i] = copperJob.ScheduleParallel(1, 1, default);
+                    if (tileCount > 20)
+                    {
+                        break;
+                    }
+                    
+                    //queue adjacent tiles that are stone
+                    List<Vector2Int> adacentStoneTiles = new List<Vector2Int>();
+                    adacentStoneTiles = TilemapUtils.ReturnSpecificAdjacentTiles(
+                        startPosition,
+                        1,
+                        tileTypeMap,
+                        _height,
+                        _width);
+                
+                    //queue adjacent tiles, if not already in queue
+                    foreach (var newTilePos in adacentStoneTiles)
+                    {
+                        //rng if this tile should exist
+                        float chance = rng.NextFloat(0, 1);
+                        
+                        if (chance < _everlastingEdenOreSO.CopperLargeVeinSpreadChance)
+                        {
+                            continue;
+                        }
+
+                        if (visitedTiles.Contains(newTilePos))
+                        {
+                            continue;
+                        }
+                        
+                        tileQueue.Enqueue(newTilePos);
+                    }
+                }
             }
-            
-            JobHandle.CompleteAll(handles);
-            
-            
-            
-            
-            //dispose handles
-            //dispose native arrays
         }
     }
 };

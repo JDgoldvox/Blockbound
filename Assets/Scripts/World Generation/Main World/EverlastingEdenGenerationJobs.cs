@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Burst;
@@ -22,10 +23,9 @@ namespace EverlastingEdenGenerationJobs
         
         public void Execute(int index)
         {
-            int x =  index % Width;
-            int y =  index / Width;
+            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width);
             
-            float rng = NoiseUtils.OctaveSimplexNoise(x, y, Octaves, Persistance, Frequency, Amplitude);
+            float rng = NoiseUtils.OctaveSimplexNoise(coord.x,coord.y, Octaves, Persistance, Frequency, Amplitude);
 
             if (rng < StoneChance)
             {
@@ -48,10 +48,9 @@ namespace EverlastingEdenGenerationJobs
         
         public void Execute(int index)
         {
-            int x =  index % Width;
-            int y =  index / Width;
+            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width);
             
-            float rng = NoiseUtils.OctavePerlinNoise(x, y, Octaves, Persistance, Frequency, Amplitude);
+            float rng = NoiseUtils.OctavePerlinNoise(coord.x, coord.y, Octaves, Persistance, Frequency, Amplitude);
 
             if (rng < StoneChance)
             {
@@ -66,7 +65,7 @@ namespace EverlastingEdenGenerationJobs
         [ReadOnly] public float Frequency;
         [ReadOnly] public float Persistance;
         [ReadOnly] public int Octaves;
-        [ReadOnly] public int width;
+        [ReadOnly] public int Width;
         [ReadOnly] public float Amplitude;
         [ReadOnly] public float StoneChance;
         
@@ -74,10 +73,9 @@ namespace EverlastingEdenGenerationJobs
         
         public void Execute(int index)
         {
-            int x =  index % width;
-            int y =  index / width;
+            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width);
             
-            float chance = NoiseUtils.OctaveWorleyBoundryNoise(x, y, Octaves, Persistance, Frequency, Amplitude);
+            float chance = NoiseUtils.OctaveWorleyBoundryNoise(coord.x, coord.y, Octaves, Persistance, Frequency, Amplitude);
 
             if (chance < StoneChance)
             {
@@ -90,75 +88,65 @@ namespace EverlastingEdenGenerationJobs
     
    #region Ore
    
-   // public struct BBBBBBCopperGenerationJob : IJobFor
-   // {
-   //     [ReadOnly] public float frequency;
-   //     [ReadOnly] public float persistance;
-   //     [ReadOnly] public int octaves;
-   //     [ReadOnly] public int width;
-   //     [ReadOnly] public float amplitude;
-   //     [ReadOnly] public float chance;
-   //     [ReadOnly] public bool debugMode;
-   //      
-   //     public NativeArray<int> tileTypeMap;
-   //      
-   //     public void Execute(int index)
-   //     {
-   //         int x =  index % width;
-   //         int y =  index / width;
-   //          
-   //         float rng = NoiseUtils.OctavePerlinNoise(x, y, octaves, persistance, frequency, amplitude);
-   //
-   //         if (debugMode && rng < chance)
-   //         {
-   //             tileTypeMap[index] = -1;
-   //         }
-   //         else if (rng < chance && tileTypeMap[index] == 1)
-   //         {
-   //             tileTypeMap[index] = 2;
-   //         }
-   //
-   //     }
-   // }
-   
    [BurstCompile]
-   public struct CopperLargeGenerationJob : IJobFor
+   public struct CopperGenerationJob : IJob 
    {
-   
-       //[ReadOnly] public NativeArray<Vector2Int> RandomCoordinates;
        [ReadOnly] public uint BaseSeed;
        [ReadOnly] public int Width;
        [ReadOnly] public int Height;
        [ReadOnly] public float SpreadChance;
-       [ReadOnly] public bool DebugMode;
        [ReadOnly] public NativeArray<int> TileTypeMap;
        public NativeList<Vector2Int> NewOre;
+
+       private int halfWidth;
        
-       public void Execute(int index)
+       public void Execute()
        {
-           uint seed = BaseSeed + (uint)index * 747796405u;
-           var rng = new Unity.Mathematics.Random(seed);
-
-
+           // uint seed = BaseSeed * 747796405u; //+ (uint)index
+           // var rng = new Unity.Mathematics.Random(seed);
+           // halfWidth = Width / 2;
+           //
            // //generate random coordinates where ore could spawn
-           // List<Vector2Int> randomCoords = new List<Vector2Int>();
-           // for (int i = 0; i < _everlastingEdenOreSO.CopperQuantity; i++)
+           // int rngX = rng.NextInt(-halfWidth, halfWidth);
+           // int rngY = rng.NextInt(0, Height);
+           // Vector2Int start = new Vector2Int(rngX, rngY);
+           //
+           // //if original centre tile is not stone, return
+           // if (TileTypeMap[TilemapConverter.CoordToIndex(start, Width)] == 0)
            // {
-           //     int rngX = rng.NextInt(-halfWidth, halfWidth);
-           //     int rngY = rng.NextInt(-halfWidth, halfWidth);
-           //     randomCoords.Add(new Vector2Int(rngX, rngY));
+           //     return;
            // }
-
-
-
-           // if (DebugMode && rng < Chance)
+           //
+           // //start flood fill
+           // NativeQueue<Vector2Int> tileQueue = new NativeQueue<Vector2Int>(Allocator.Temp);
+           //  
+           // tileQueue.Enqueue(start);
+           //
+           // while (tileQueue.Count > 0)
            // {
-           //     tileTypeMap[index] = -1;
+           //     Vector2Int tilePos = tileQueue.Dequeue();
+           //     
+           //     //check if this tile is a stone tile
+           //     if (!IsStoneTile(tilePos))
+           //     {
+           //         continue;
+           //     }
+           //     
+           //     //rng if this tile should exist
+           //     if (!IsTileExist(rng))
+           //     {
+           //         continue;
+           //     }
+           //      
+           //     //if Is a stone tile and does exist, 
+           //     //add to tiletype vector
+           //     NewOre.Add(tilePos);
+           //     
+           //     //add surrounding tile to queue
+           //     AddAdjacentTilesToQueue(tilePos, ref tileQueue);
            // }
-           // else if (rng < Chance && tileTypeMap[index] == 1)
-           // {
-           //     tileTypeMap[index] = 2;
-           // }
+           //
+           // tileQueue.Dispose();
        }
    }
    
