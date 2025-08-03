@@ -7,17 +7,9 @@ public static class TilemapUtils
     public static bool IsOutOfBounds(Vector2Int position, int width, int height)
     {
         int halfWidth = width / 2;
-        
-        if (position.x < -halfWidth || position.x > halfWidth)
-        {
-            return true;
-        }
-        else if (position.y < 0 || position.y > height)
-        {
-            return true;
-        }
-           
-        return false;
+        bool xOutOfBounds = position.x < -halfWidth || position.x >= halfWidth;
+        bool yOutOfBounds = position.y < 0 || position.y >= height;
+        return xOutOfBounds || yOutOfBounds;
     }
     
     public static bool IsSpecificTile(Vector2Int position, int tileID, NativeArray<int> TileTypeMap, int width)
