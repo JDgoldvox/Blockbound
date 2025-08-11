@@ -15,7 +15,7 @@ MonoBehaviour:
   EnableCopper: 1
   CopperLargeVeinQuantity: 1000
   CopperSmallVeinQuantity: 0
-  CopperLargeVeinSpreadChance: 0.6
+  CopperLargeVeinSpreadChance: 0.7
   CopperSmallVeinSpreadChance: 0
   _enableIron: 0
   IronQuantity: 0
