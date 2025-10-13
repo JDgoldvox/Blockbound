@@ -3,13 +3,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EverlastingEdenOreSO", menuName = "WorldGenerator/EverlastingEden/Ore")]
 public class EverlastingEdenOreSO : ScriptableObject
 {
-    [Header("Copper")] 
+    [Header("Copper-----------------------------------------------------------------------------")] 
     public bool EnableCopper;
+    [Header("Large Vein")] 
     public int CopperLargeVeinQuantity;
-    public int CopperSmallVeinQuantity;
+    public int CopperLargeVeinMaxTileQuantity;
     public float CopperLargeVeinSpreadChance;
-    public float CopperSmallVeinSpreadChance;
 
+    [Header("Small Vein")] 
+    public int CopperSmallVeinQuantity;
+    public int CopperSmallVeinMaxTileQuantity;
+    public float CopperSmallVeinSpreadChance;
+    
     [Header("Iron")] 
     public bool _enableIron;
     public int IronQuantity;

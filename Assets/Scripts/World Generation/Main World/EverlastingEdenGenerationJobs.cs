@@ -16,6 +16,7 @@ namespace EverlastingEdenGenerationJobs
         [ReadOnly] public float Persistance;
         [ReadOnly] public int Octaves;
         [ReadOnly] public int Width;
+        [ReadOnly] public int Height;
         [ReadOnly] public float Amplitude;
         [ReadOnly] public float StoneChance;
         
@@ -23,7 +24,7 @@ namespace EverlastingEdenGenerationJobs
         
         public void Execute(int index)
         {
-            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width);
+            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width, Height);
             
             float rng = NoiseUtils.OctaveSimplexNoise(coord.x,coord.y, Octaves, Persistance, Frequency, Amplitude);
 
@@ -41,6 +42,7 @@ namespace EverlastingEdenGenerationJobs
         [ReadOnly] public float Persistance;
         [ReadOnly] public int Octaves;
         [ReadOnly] public int Width;
+        [ReadOnly] public int Height;
         [ReadOnly] public float Amplitude;
         [ReadOnly] public float StoneChance;
         
@@ -48,7 +50,7 @@ namespace EverlastingEdenGenerationJobs
         
         public void Execute(int index)
         {
-            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width);
+            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width, Height);
             
             float rng = NoiseUtils.OctavePerlinNoise(coord.x, coord.y, Octaves, Persistance, Frequency, Amplitude);
 
@@ -66,6 +68,7 @@ namespace EverlastingEdenGenerationJobs
         [ReadOnly] public float Persistance;
         [ReadOnly] public int Octaves;
         [ReadOnly] public int Width;
+        [ReadOnly] public int Height;
         [ReadOnly] public float Amplitude;
         [ReadOnly] public float StoneChance;
         
@@ -73,7 +76,7 @@ namespace EverlastingEdenGenerationJobs
         
         public void Execute(int index)
         {
-            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width);
+            Vector2Int coord = TilemapConverter.IndexToCoord(index, Width, Height);
             
             float chance = NoiseUtils.OctaveWorleyBoundryNoise(coord.x, coord.y, Octaves, Persistance, Frequency, Amplitude);
 

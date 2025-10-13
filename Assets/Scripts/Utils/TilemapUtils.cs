@@ -7,14 +7,17 @@ public static class TilemapUtils
     public static bool IsOutOfBounds(Vector2Int position, int width, int height)
     {
         int halfWidth = width / 2;
-        bool xOutOfBounds = position.x < -halfWidth || position.x >= halfWidth;
-        bool yOutOfBounds = position.y < 0 || position.y >= height;
+        int halfHeight = height / 2;
+        
+        bool xOutOfBounds = (position.x < -halfWidth) || (position.x >= halfWidth);
+        bool yOutOfBounds = (position.y < -halfHeight) || (position.y >= halfHeight);
         return xOutOfBounds || yOutOfBounds;
     }
     
-    public static bool IsSpecificTile(Vector2Int position, int tileID, NativeArray<int> TileTypeMap, int width)
+    public static bool IsSpecificTile(Vector2Int position, int tileID, NativeArray<int> TileTypeMap, int width, int height)
     {
-        if (TileTypeMap[TilemapConverter.CoordToIndex(position, width)] == tileID)
+        
+        if (TileTypeMap[TilemapConverter.CoordToIndex(position, width, height)] == tileID)
         {
             return true;
         }
@@ -35,12 +38,13 @@ public static class TilemapUtils
     public static List<Vector2Int> ReturnSpecificAdjacentTiles(Vector2Int centreTilePosition, int tileID, NativeArray<int> tileTypeMap, int height, int width)
     {
         List<Vector2Int> adjacentTiles = new List<Vector2Int>();
+        int halfWidth = width / 2;
         
         //top left
-        Vector2Int newTilePos = new Vector2Int(centreTilePosition.x - 1,centreTilePosition.y + 1);
+        Vector2Int newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y + 1);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }
@@ -50,7 +54,7 @@ public static class TilemapUtils
         newTilePos = new Vector2Int(centreTilePosition.x, centreTilePosition.y + 1);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }
@@ -60,7 +64,7 @@ public static class TilemapUtils
         newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y + 1);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }
@@ -70,7 +74,7 @@ public static class TilemapUtils
         newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }
@@ -80,7 +84,7 @@ public static class TilemapUtils
         newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }
@@ -90,7 +94,7 @@ public static class TilemapUtils
         newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y - 1);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }
@@ -100,7 +104,7 @@ public static class TilemapUtils
         newTilePos = new Vector2Int(centreTilePosition.x, centreTilePosition.y - 1);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }
@@ -110,7 +114,7 @@ public static class TilemapUtils
             newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y - 1);
         if (!IsOutOfBounds(newTilePos, width, height))
         {
-            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width))
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
                 adjacentTiles.Add(newTilePos);
             }

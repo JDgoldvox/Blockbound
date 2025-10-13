@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: EverlastingEdenOreSO
   m_EditorClassIdentifier: 
   EnableCopper: 1
-  CopperLargeVeinQuantity: 1000
+  CopperLargeVeinQuantity: 1
+  CopperLargeVeinMaxTileQuantity: 20
+  CopperLargeVeinSpreadChance: 1
   CopperSmallVeinQuantity: 0
-  CopperLargeVeinSpreadChance: 0.7
+  CopperSmallVeinMaxTileQuantity: 0
   CopperSmallVeinSpreadChance: 0
   _enableIron: 0
   IronQuantity: 0
