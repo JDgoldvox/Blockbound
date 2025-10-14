@@ -14,7 +14,7 @@ using Debug = UnityEngine.Debug;
 [BurstCompile]
 public class EverlastingEdenWorldGenerator : MonoBehaviour
 {
-    [SerializeField] private Tilemap _tileMap;
+    //[SerializeField] private Tilemap _tileMap;
     
     private Dictionary<Vector3Int, Tile> _blocks;
     public Tile debugBlock, stone, copper, iron, grass, dirt;
@@ -26,17 +26,24 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
     [SerializeField] private int _halfHeight;
     private int _width = 0;
     private int _height = 0;
+    public int BottomRowYPosition = 0;
+    [HideInInspector]public int YOffset = 0;
 
     [Header("Stone World Generator")] 
     [SerializeField] private EverlastingEdenStoneSO _everlastingEdenStoneSO; 
     [SerializeField] private EverlastingEdenOreSO _everlastingEdenOreSO; 
-
+    
+    //tilemap Chunks
+    TilemapChunkManager _chunkManager;
+    [SerializeField] private Transform _tilemapParent;
+    
     private void Awake()
     {
         _blocks = new Dictionary<Vector3Int, Tile>();  
+        _chunkManager = new TilemapChunkManager();
     }
 
-    public void GenerateWorldParallel()
+    public void GenerateWorld()
     {
         //random struct
         System.Random baseSeedGenerator = new System.Random();
@@ -46,10 +53,12 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         _width = _halfWidth * 2;
         _height = _halfHeight * 2;
         _totalBlocks = _width * _height;
+        YOffset = _halfHeight + BottomRowYPosition;
+        
+        //init chunks
+        _chunkManager.InitChunks(_width, _height, BottomRowYPosition, _tilemapParent);
         
         //stuff to do before
-        //var stopwatch = Stopwatch.StartNew();
-        _tileMap.ClearAllTiles();
         NativeArray<int> tileTypeMap = new NativeArray<int>(_totalBlocks, Allocator.TempJob);
         
         //Generate stone
@@ -63,9 +72,6 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         
         //clean up
         tileTypeMap.Dispose();
-        
-        //stopwatch.Stop();
-        //UnityEngine.Debug.Log(stopwatch.ElapsedMilliseconds + "ms");
     }
 
     private void BuildTileMap(NativeArray<int> tileTypeMap)
@@ -75,21 +81,24 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
         {
             Vector2Int coord = TilemapConverter.IndexToCoord(i, _width, _height);
             int tile = tileTypeMap[i];
-            Vector3Int tilePos = new Vector3Int(coord.x, coord.y, 0);
+            Vector3Int tilePos = new Vector3Int(coord.x, coord.y + YOffset, 0);
+            
+            //get tilemap from spacially quantized world
+            Tilemap _tilemap = _chunkManager.ReturnChunkAtPosition(tilePos, YOffset);
             
             switch (tile)
             {
                 case -1:
-                    _tileMap.SetTile(tilePos, debugBlock);
+                    _tilemap.SetTile(tilePos, debugBlock);
                     break;
                 case 0:
-                    _tileMap.SetTile(tilePos, null);
+                    _tilemap.SetTile(tilePos, null);
                     break;
                 case 1:
-                    _tileMap.SetTile(tilePos, stone);
+                    _tilemap.SetTile(tilePos, stone);
                     break;
-                case 2: 
-                    _tileMap.SetTile(tilePos, copper);
+                case 2:
+                    _tilemap.SetTile(tilePos, copper);
                     break;
             }
         }
