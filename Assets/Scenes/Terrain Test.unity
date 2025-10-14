@@ -1097,8 +1097,8 @@ MonoBehaviour:
   iron: {fileID: 11400000, guid: 07aff6549b919c14ba3a1db96f5532ad, type: 2}
   grass: {fileID: 11400000, guid: 3362d72a0c97a15499f53ab367fac001, type: 2}
   dirt: {fileID: 11400000, guid: db6d32435dd5a1048ab9d0042b190b25, type: 2}
-  _halfWidth: 5
-  _halfHeight: 5
+  _halfWidth: 2000
+  _halfHeight: 200
   _everlastingEdenStoneSO: {fileID: 11400000, guid: 7c48b32f56b8b3448b70f63d31231382, type: 2}
   _everlastingEdenOreSO: {fileID: 11400000, guid: 8073720b3f409f949bdc76042b073cef, type: 2}
 --- !u!4 &1246602119

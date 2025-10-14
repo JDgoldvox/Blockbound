@@ -103,6 +103,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             var stoneBaseJob = new EverlastingEdenGenerationJobs.StoneBaseGenerationJob()
             {
                 Width = _width,
+                Height = _height,
                 Frequency = _everlastingEdenStoneSO.StoneBaseFrequency,
                 Persistance = _everlastingEdenStoneSO.StoneBasePersistance,
                 Octaves = _everlastingEdenStoneSO.StoneBaseOctaves,
@@ -122,6 +123,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             var stoneDetailJob = new EverlastingEdenGenerationJobs.StoneDetailGenerationJob()
             {
                 Width = _width,
+                Height = _height,
                 Frequency = _everlastingEdenStoneSO.StoneDetailFrequency,
                 Persistance = _everlastingEdenStoneSO.StoneDetailPersistance,
                 Octaves =  _everlastingEdenStoneSO.StoneDetailOctaves,
@@ -140,6 +142,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             var stoneTunnelJob = new EverlastingEdenGenerationJobs.StoneTunnelGenerationJob()
             {
                 Width = _width,
+                Height = _height,
                 Frequency = _everlastingEdenStoneSO.StoneTunnelFrequency,
                 Persistance = _everlastingEdenStoneSO.StoneTunnelPersistance,
                 Octaves = _everlastingEdenStoneSO.StoneTunnelOctaves,
@@ -217,7 +220,8 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
                 1,
                 tileTypeMap,
                 _height,
-                _width);
+                _width
+                );
 
             //queue adjacent tiles, if not already in queue
             foreach (var newTilePos in adjacentStoneTiles)
