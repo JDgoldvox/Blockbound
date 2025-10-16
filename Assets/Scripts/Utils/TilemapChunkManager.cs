@@ -7,7 +7,6 @@ public class TilemapChunkManager : MonoBehaviour
     private const int CHUNK_SIZE = 64;
     public Dictionary<Vector3Int, Tilemap> Chunks = new  Dictionary<Vector3Int, Tilemap>();
     
-    
     //Chunks will be 64 x 64
     
     /// <summary>
@@ -39,7 +38,7 @@ public class TilemapChunkManager : MonoBehaviour
              for (int row = bottomRowYPosition; row < firstYOutOfBounds; row += CHUNK_SIZE)
              {
                  GameObject newTilemapObject = new GameObject();
-                 newTilemapObject.transform.parent = chunkParent; 
+                 newTilemapObject.transform.parent = chunkParent;   
                  Tilemap newTilemapComponent = newTilemapObject.AddComponent<Tilemap>();
                  newTilemapObject.AddComponent<TilemapRenderer>();
                  
@@ -49,20 +48,38 @@ public class TilemapChunkManager : MonoBehaviour
          }
     }
 
-    public Tilemap ReturnChunkAtPosition(Vector3Int position, int offsetY)
+    public Tilemap ReturnChunkAtPosition(Vector3Int position, int bottomRowPosition)
     {
         //find how far away from the bottom left of the nearest chunk is
-        int remainderX = position.x % CHUNK_SIZE;
-        int remainderY = position.y % CHUNK_SIZE;
+        //divide, floor and then multiply, cant use mod because negative numbers always rounds the opposite direction
         
-        Vector3Int chunkPosition =  new Vector3Int(position.x - remainderX, (position.y - remainderY), 0);
+        int chunkXIndex = position.x / CHUNK_SIZE;
 
-        if (Chunks.ContainsKey(chunkPosition))
+        if (position.x < 0 && position.x % CHUNK_SIZE != 0)
         {
-            return Chunks[chunkPosition];
+            chunkXIndex--;
+        }
+    
+        // --- Y-Axis Calculation --- take away to align with 0
+        int chunkYIndex = (position.y - bottomRowPosition) / CHUNK_SIZE;
+    
+        if (position.y < 0 && position.y % CHUNK_SIZE != 0)
+        {
+            chunkYIndex--;
+        }
+
+        // Multiply back to get the world coordinate of the key (the bottom-left corner)
+        int chunkKeyX = chunkXIndex * CHUNK_SIZE;
+        int chunkKeyY = (chunkYIndex * CHUNK_SIZE) + bottomRowPosition; //add bottom row position back to reflect real position
+        
+        Vector3Int chunkPositionIndex =  new Vector3Int(chunkKeyX,chunkKeyY, 0);
+
+        if (Chunks.ContainsKey(chunkPositionIndex))
+        {
+            return Chunks[chunkPositionIndex];
         }
         
-        Debug.LogError($"[Chunk Error] Key {chunkPosition} was calculated but not found in the dictionary.");
+        Debug.LogError($"[Chunk Error] Key {chunkPositionIndex} was calculated but not found in the dictionary.");
         Debug.LogError($"[Chunk Info] Position that caused error: {position}.");
         return null;
     }

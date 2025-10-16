@@ -84,7 +84,7 @@ public class EverlastingEdenWorldGenerator : MonoBehaviour
             Vector3Int tilePos = new Vector3Int(coord.x, coord.y + YOffset, 0);
             
             //get tilemap from spacially quantized world
-            Tilemap _tilemap = _chunkManager.ReturnChunkAtPosition(tilePos, YOffset);
+            Tilemap _tilemap = _chunkManager.ReturnChunkAtPosition(tilePos, BottomRowYPosition);
             
             switch (tile)
             {

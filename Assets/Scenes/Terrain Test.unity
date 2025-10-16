@@ -1096,7 +1096,7 @@ MonoBehaviour:
   iron: {fileID: 11400000, guid: 07aff6549b919c14ba3a1db96f5532ad, type: 2}
   grass: {fileID: 11400000, guid: 3362d72a0c97a15499f53ab367fac001, type: 2}
   dirt: {fileID: 11400000, guid: db6d32435dd5a1048ab9d0042b190b25, type: 2}
-  _halfWidth: 640
+  _halfWidth: 64
   _halfHeight: 64
   BottomRowYPosition: 0
   YOffset: 0
