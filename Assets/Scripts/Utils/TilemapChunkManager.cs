@@ -15,6 +15,12 @@ public class TilemapChunkManager : MonoBehaviour
     /// </summary>
     public void InitChunks(int width, int height, int bottomRowYPosition, Transform chunkParent)
     {
+        //Check if we already created tilemaps before
+        foreach (Transform child in chunkParent)
+        {
+            Destroy(child.gameObject);
+        }
+            
         //extra info, height and width are always even
         //world will always be multiple of 64
         //chunk parent will always have grid component
@@ -23,7 +29,7 @@ public class TilemapChunkManager : MonoBehaviour
         int chunkNum = (width * height) / (CHUNK_SIZE * CHUNK_SIZE);
         //2. quantize this space
         //x will always be the same from width
-        //y will change depending on the yOffset
+        //y will change depending on the yOffset    
         
         int halfWidth = width / 2;
         int firstYOutOfBounds = height + bottomRowYPosition;

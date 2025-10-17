@@ -9,12 +9,17 @@ public static class NoiseUtils
 {
     private static readonly int _truePositiveOffset = 10000;
     
+    //persistance = rate at which amplitude decreases, high = decrease slow, low = decrease fast
+    //amplitude = makes features stand out, (low = 0.5-1, med=1-2, high=2-3), low = smooth, high = rough
+    //frequency = zoom level
+    
     public static float OctavePerlinNoise(float x, float y, int octaves, float persistence, float frequency, float amplitude)
     {
         float total = 0;
         float maxValue = 0;
         float tempValue = 0;
 
+        
         for (int i = 0; i < octaves; i++)
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
@@ -35,7 +40,7 @@ public static class NoiseUtils
         float total = 0;
         float maxValue = 0;
         float tempValue = 0;
-
+        
         for (int i = 0; i < octaves; i++)
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
