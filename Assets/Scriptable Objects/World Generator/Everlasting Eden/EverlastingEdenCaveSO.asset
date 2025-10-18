@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77494877bd7ab8644abdc4163b37c366, type: 3}
+  m_Name: EverlastingEdenCaveSO
+  m_EditorClassIdentifier: 
+  DebugFillWithMaterial: 0
+  EnableCaveBase: 1
+  CaveBaseFrequency: 0.015
+  CaveBasePersistance: 0.8
+  CaveBaseOctaves: 3
+  CaveBaseAmplitude: 0.8
+  CaveBaseMaterialFillChance: 0.8
+  EnableSmallCave: 1
+  SmallCaveFrequency: 0.05
+  SmallCavePersistance: 0.7
+  SmallCaveOctaves: 2
+  SmallCaveAmplitude: 0.8
+  SmallCaveFillChance: 0.6
+  EnableCavern: 1
+  CavernFrequency: 0.005
+  CavernPersistance: 1
+  CavernOctaves: 2
+  CavernAmplitude: 1
+  CavernChance: 0.8
+  EnableSmallCaveFill: 1
+  SmallCaveFillFrequency: 0.02
+  SmallCaveFillPersistance: 0.1
+  SmallCaveFillOctaves: 1
+  SmallCaveFillAmplitude: 1.1
+  SmallCaveFillMaterialFillChance: 0.4
+  EnableLargeCaveFill: 1
+  LargeCaveFillFrequency: 0.004
+  LargeCaveFillPersistance: 2
+  LargeCaveFillOctaves: 1
+  LargeCaveFillAmplitude: 0.8
+  LargeCaveFillMaterialFillChance: 0.3

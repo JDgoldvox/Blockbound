@@ -1121,19 +1121,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 000d42c58cb361b42b32d4492caae981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _halfWidth: 640
+  _halfHeight: 640
+  bottomRowYPosition: 0
+  yOffset: 0
+  _tilemapParent: {fileID: 844926023}
   debugBlock: {fileID: 11400000, guid: c07b823f32f2c044085adea33b6eaac8, type: 2}
   stone: {fileID: 11400000, guid: d39b6a3892100554aae009ce2cd35275, type: 2}
   copper: {fileID: 11400000, guid: c33aaa92aea1b014394b54ef0c86474f, type: 2}
   iron: {fileID: 11400000, guid: 07aff6549b919c14ba3a1db96f5532ad, type: 2}
   grass: {fileID: 11400000, guid: 3362d72a0c97a15499f53ab367fac001, type: 2}
   dirt: {fileID: 11400000, guid: db6d32435dd5a1048ab9d0042b190b25, type: 2}
-  _halfWidth: 320
-  _halfHeight: 320
-  BottomRowYPosition: 0
-  YOffset: 0
-  _everlastingEdenStoneSO: {fileID: 11400000, guid: 7c48b32f56b8b3448b70f63d31231382, type: 2}
-  _everlastingEdenOreSO: {fileID: 11400000, guid: 8073720b3f409f949bdc76042b073cef, type: 2}
-  _tilemapParent: {fileID: 844926023}
+  caveSO: {fileID: 11400000, guid: 7c48b32f56b8b3448b70f63d31231382, type: 2}
+  _oreSO: {fileID: 11400000, guid: 8073720b3f409f949bdc76042b073cef, type: 2}
 --- !u!4 &1246602119
 Transform:
   m_ObjectHideFlags: 0

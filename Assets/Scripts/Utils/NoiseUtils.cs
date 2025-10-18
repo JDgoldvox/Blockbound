@@ -19,7 +19,6 @@ public static class NoiseUtils
         float maxValue = 0;
         float tempValue = 0;
 
-        
         for (int i = 0; i < octaves; i++)
         {
             float2 coordinate = new float2((x + _truePositiveOffset) * frequency, (y + _truePositiveOffset) * frequency);
@@ -91,10 +90,11 @@ public static class NoiseUtils
             total += tempValue;
             
             maxValue += amplitude;
-            amplitude *= persistence;
+            amplitude *= persistence; 
             frequency *= 2;
         }
         
         return total / maxValue;
     }
+    
 }
