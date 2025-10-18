@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -5,8 +6,13 @@ using UnityEngine.Tilemaps;
 public class TilemapChunkManager : MonoBehaviour
 {
     private const int CHUNK_SIZE = 64;
-    public Dictionary<Vector3Int, Tilemap> Chunks = new  Dictionary<Vector3Int, Tilemap>();
-    
+    public Dictionary<Vector3Int, Tilemap> Chunks;
+
+    private void Awake()
+    {
+        Chunks = new  Dictionary<Vector3Int, Tilemap>();
+    }
+
     //Chunks will be 64 x 64
     
     /// <summary>

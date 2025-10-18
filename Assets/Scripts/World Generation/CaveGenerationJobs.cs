@@ -10,11 +10,12 @@ namespace WorldGenerationJobs
     [BurstCompile]
     public struct DebugMaterialFillJob : IJobFor //Fills all tiles with a tile
     {
+        public int MaterialID;
         public NativeArray<int> TileTypeMap;
 
         public void Execute(int index)
         {
-            TileTypeMap[index] = 1;
+            TileTypeMap[index] = MaterialID;
         }
     }
     
@@ -28,7 +29,7 @@ namespace WorldGenerationJobs
         [ReadOnly] public int Height;
         [ReadOnly] public float Amplitude;
         [ReadOnly] public float FillChance;
-        [ReadOnly] public int MaterialNum;
+        [ReadOnly] public int MaterialID;
         
         public NativeArray<int> TileTypeMap;
         
@@ -39,7 +40,7 @@ namespace WorldGenerationJobs
 
             if (rng < FillChance)
             {
-                TileTypeMap[index] = MaterialNum;
+                TileTypeMap[index] = MaterialID;
             }
         }
     }
