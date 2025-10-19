@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
@@ -6,14 +7,23 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Diagnostics;
 
+//HOW TO USE CLASS
+/// <summary>
+///  1. variable all the tiles being used
+///  2. PreGenerationTasks()
+///  3. Do jobs to generate terrain
+///  4. CleanUp()
+/// </summary>
+
 [BurstCompile]
 public class WorldGenerator : MonoBehaviour
 {
+    [Header("World Size")] 
+    [SerializeField] protected int _chunkHalfWidth; //total half width of chunks
+    [SerializeField] protected int _chunkHalfHeight;
     protected int _totalBlocks;
-    
-    [Header("Size")]
-    [SerializeField] protected int _halfWidth; 
-    [SerializeField] protected int _halfHeight;
+    protected int _halfWidth = 0; //num of tiles 
+    protected int _halfHeight = 0;
     protected int _width = 0;
     protected int _height = 0;
     public int bottomRowYPosition = 0;
@@ -22,10 +32,40 @@ public class WorldGenerator : MonoBehaviour
     //tilemap Chunks
     protected TilemapChunkManager _chunkManager;
     [SerializeField] protected Transform _tilemapParent;
+    protected NativeArray<int> tileTypeMap;
+    protected Unity.Mathematics.Random rng;
     
     private void Awake()
     {
         _chunkManager = _tilemapParent.AddComponent<TilemapChunkManager>();
+    }
+
+    private void Start()
+    {
+        System.Random baseSeedGenerator = new System.Random();
+        uint seed = (uint)baseSeedGenerator.Next(1, int.MaxValue) | 1;
+        rng = new Unity.Mathematics.Random(seed);
+    }
+
+    protected void PreGenerationTasks()
+    {
+        _halfWidth = CONSTANTS.CHUNK_LENGTH * _chunkHalfWidth;
+        _halfHeight = CONSTANTS.CHUNK_LENGTH * _chunkHalfHeight;
+        _width = _halfWidth * 2;
+        _height = _halfHeight * 2;
+        _totalBlocks = _width * _height;
+        yOffset = _halfHeight + bottomRowYPosition;
+        
+        //init chunks
+        _chunkManager.InitChunks(_width, _height, bottomRowYPosition, _tilemapParent);
+        
+        //init tile map
+        tileTypeMap = new NativeArray<int>(_totalBlocks, Allocator.TempJob);
+    }
+
+    protected void CleanUp()
+    {
+        tileTypeMap.Dispose();
     }
     
     public void BuildTileMap(NativeArray<int> tileTypeMap)

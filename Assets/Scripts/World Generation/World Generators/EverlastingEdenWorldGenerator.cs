@@ -1,21 +1,16 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using System.Diagnostics;
-using System.Linq;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using WorldGenerationJobs;
-using Unity.Jobs.LowLevel.Unsafe;
 
 [BurstCompile]
 public class EverlastingEdenWorldGenerator : WorldGenerator
 {
     [SerializeField] private CaveSO _caveSO; 
     [SerializeField] private EverlastingEdenOreSO _oreSO;
-
+    
     [Header("Blocks")] 
     [SerializeField] private BlockItemSO _debugBlock;
     [SerializeField] private BlockItemSO _airBlock;
@@ -27,21 +22,7 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
     
     public void GenerateWorld()
     {
-        //random struct
-        System.Random baseSeedGenerator = new System.Random();
-        uint seed = (uint)baseSeedGenerator.Next(1, int.MaxValue) | 1;
-        Unity.Mathematics.Random rng = new Unity.Mathematics.Random(seed);
-
-        _width = _halfWidth * 2;
-        _height = _halfHeight * 2;
-        _totalBlocks = _width * _height;
-        yOffset = _halfHeight + bottomRowYPosition;
-        
-        //init chunks
-        _chunkManager.InitChunks(_width, _height, bottomRowYPosition, _tilemapParent);
-        
-        //stuff to do before
-        NativeArray<int> tileTypeMap = new NativeArray<int>(_totalBlocks, Allocator.TempJob);
+        PreGenerationTasks();
         
         //Generate stone
         GenerateCaveLayer(tileTypeMap);
@@ -55,8 +36,6 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
         //clean up
         tileTypeMap.Dispose();
     }
-
-    
 
     private void GenerateCaveLayer(NativeArray<int> tileTypeMap)
     {
@@ -200,6 +179,4 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
             }
         }
     }
-
-    
 };
