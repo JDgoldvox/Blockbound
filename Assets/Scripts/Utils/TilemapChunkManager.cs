@@ -10,11 +10,9 @@ public class TilemapChunkManager : MonoBehaviour
 
     private void Awake()
     {
-        Chunks = new  Dictionary<Vector3Int, Tilemap>();
+        Chunks = new Dictionary<Vector3Int, Tilemap>();
     }
 
-    //Chunks will be 64 x 64
-    
     /// <summary>
     /// Function will be key to create tile maps
     /// store bottom left position of each chunk

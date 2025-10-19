@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Burst;
@@ -23,18 +22,10 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
     public void GenerateWorld()
     {
         PreGenerationTasks();
-        
-        //Generate stone
         GenerateCaveLayer(tileTypeMap);
-        
-        //Generate Ore
         GenerateOreLayer(tileTypeMap, ref rng);
-        
-        //main thread map build
         BuildTileMap(tileTypeMap);
-        
-        //clean up
-        tileTypeMap.Dispose();
+        CleanUp();
     }
 
     private void GenerateCaveLayer(NativeArray<int> tileTypeMap)
