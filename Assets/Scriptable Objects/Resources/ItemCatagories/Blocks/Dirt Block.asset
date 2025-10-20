@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlockItemSO
   ID: 1001
   sprite: {fileID: 0}
-  tileBase: {fileID: 11400000, guid: db6d32435dd5a1048ab9d0042b190b25, type: 2}
+  tileBase: {fileID: 11400000, guid: 39f140c18548e4343a9cf66d7e299be7, type: 2}
