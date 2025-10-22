@@ -26,6 +26,9 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
         GenerateOreLayer(tileTypeMap, ref rng);
         BuildTileMap(tileTypeMap);
         CleanUp();
+        
+        //extra
+        _chunkManager.WriteChunkOuterLayer(_width, _height, yOffset);
     }
 
     private void GenerateCaveLayer(NativeArray<int> tileTypeMap)

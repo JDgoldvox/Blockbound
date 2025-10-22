@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public static class TilemapUtils
 {
-    public static bool IsOutOfBounds(Vector2Int position, int width, int height)
+    public static bool IsOutOfBounds(Vector2Int position, int width, int height, int yOffset)
     {
         int halfWidth = width / 2;
-        int halfHeight = height / 2;
+        int halfHeight = (height / 2) + yOffset;
         
         bool xOutOfBounds = (position.x < -halfWidth) || (position.x >= halfWidth);
         bool yOutOfBounds = (position.y < -halfHeight) || (position.y >= halfHeight);
@@ -16,7 +17,6 @@ public static class TilemapUtils
     
     public static bool IsSpecificTile(Vector2Int position, int tileID, NativeArray<int> TileTypeMap, int width, int height)
     {
-        
         if (TileTypeMap[TilemapConverter.CoordToIndex(position, width, height)] == tileID)
         {
             return true;
@@ -34,7 +34,23 @@ public static class TilemapUtils
         
         return false;
     }
+    
+    // public static bool IsSpecificTile(Vector3Int position, TileBase tileType, Tilemap tilemap)
+    // {
+    //     
+    //     
+    //     return false;
+    // }
 
+    /// <summary>
+    /// Return list of tiles surrounding this tile that are of a certain type
+    /// </summary>
+    /// <param name="centreTilePosition"> the tile that we are scanning around</param>
+    /// <param name="tileID"></param>
+    /// <param name="tileTypeMap"></param>
+    /// <param name="height"></param>
+    /// <param name="width"></param>
+    /// <returns></returns>
     public static List<Vector2Int> ReturnSpecificAdjacentTiles(Vector2Int centreTilePosition, int tileID, NativeArray<int> tileTypeMap, int height, int width)
     {
         List<Vector2Int> adjacentTiles = new List<Vector2Int>();
@@ -42,7 +58,7 @@ public static class TilemapUtils
         
         //top left
         Vector2Int newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y + 1);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
@@ -52,7 +68,7 @@ public static class TilemapUtils
         
         //top middle
         newTilePos = new Vector2Int(centreTilePosition.x, centreTilePosition.y + 1);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
@@ -62,7 +78,7 @@ public static class TilemapUtils
         
         //top right
         newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y + 1);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
@@ -72,7 +88,7 @@ public static class TilemapUtils
         
         //middle left
         newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
@@ -82,7 +98,7 @@ public static class TilemapUtils
         
         //middle right
         newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
@@ -92,7 +108,7 @@ public static class TilemapUtils
         
         //bottom left
         newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y - 1);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
@@ -102,7 +118,7 @@ public static class TilemapUtils
         
         //bottom middle
         newTilePos = new Vector2Int(centreTilePosition.x, centreTilePosition.y - 1);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, -0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
@@ -112,7 +128,7 @@ public static class TilemapUtils
         
         //bottom right
             newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y - 1);
-        if (!IsOutOfBounds(newTilePos, width, height))
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
         {
             if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
             {
