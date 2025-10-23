@@ -22,13 +22,12 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
     public void GenerateWorld()
     {
         PreGenerationTasks();
+        
         GenerateCaveLayer(tileTypeMap);
         GenerateOreLayer(tileTypeMap, ref rng);
         BuildTileMap(tileTypeMap);
-        CleanUp();
         
-        //extra
-        _chunkManager.WriteChunkOuterLayer(_width, _height, yOffset);
+        CleanUp();
     }
 
     private void GenerateCaveLayer(NativeArray<int> tileTypeMap)

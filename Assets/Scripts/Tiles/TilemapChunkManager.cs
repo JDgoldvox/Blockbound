@@ -9,11 +9,11 @@ using UnityEngine.Tilemaps;
 public class TilemapChunkManager : MonoBehaviour
 {
     private const int CHUNK_SIZE = 64;
-    public Dictionary<Vector3Int, Tilemap> Chunks;
+    public Dictionary<Vector3Int, Tilemap> chunks;
 
     private void Awake()
     {
-        Chunks = new Dictionary<Vector3Int, Tilemap>(); //bottom left of chunk
+        chunks = new Dictionary<Vector3Int, Tilemap>(); //bottom left of chunk
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ public class TilemapChunkManager : MonoBehaviour
                  newTilemapObject.AddComponent<TilemapRenderer>();
                  
                  //store chunk
-                 Chunks[new Vector3Int(col, row)] = newTilemapComponent;
+                 chunks[new Vector3Int(col, row)] = newTilemapComponent;
              }
          }
     }
@@ -87,9 +87,9 @@ public class TilemapChunkManager : MonoBehaviour
         
         Vector3Int chunkPositionIndex =  new Vector3Int(chunkKeyX,chunkKeyY, 0);
 
-        if (Chunks.ContainsKey(chunkPositionIndex))
+        if (chunks.ContainsKey(chunkPositionIndex))
         {
-            return Chunks[chunkPositionIndex];
+            return chunks[chunkPositionIndex];
         }
         
         Debug.LogError($"[Chunk Error] Key {chunkPositionIndex} was calculated but not found in the dictionary.");
@@ -99,169 +99,112 @@ public class TilemapChunkManager : MonoBehaviour
     
     //Add a ring around the outside the tilemap 1 block in length to make sure rule tiling works
     //should be called only once
-    public void WriteChunkOuterLayer(int width, int height, int yOffset)
+    public void WriteAllChunkOuterLayers(int width, int height)
     {
-        foreach (var chunk in Chunks)
+        foreach (var currentChunk in chunks)
         {
-            //get tilemap at hand
-            Tilemap currentTileMap = chunk.Value;
+            WriteChunkOuterLayer(width, height, currentChunk);
+        }
+    }
+
+    public void WriteChunkOuterLayer(int width, int height, KeyValuePair<Vector3Int, Tilemap> currentChunk)
+    {
+        //get tilemap at hand
+        Tilemap currentTileMap = currentChunk.Value;
             
-            //left side *******************************************************************
-            //create key for chunk we want to check
-            Vector3Int newKey = new Vector3Int(chunk.Key.x - CONSTANTS.CHUNK_LENGTH, chunk.Key.y);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap leftTileMap))
+        // new tile chunk key
+        // starting Tile Position
+        // loop limit length
+        // direction to increment
+        var chunkChecks = new (Vector3Int newChunkKey, Vector3Int startingChunkPosition, int loopLimit, Vector3Int step)[]
             {
-                //if contains, create starting position
-                Vector3Int startingTilePosition = new Vector3Int(chunk.Key.x - 1, chunk.Key.y);
+                //left side
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x - CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y), //new chunk key
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x - 1, currentChunk.Key.y), //starting loop position
+                    loopLimit: CONSTANTS.CHUNK_LENGTH, //loop limit
+                    step: new Vector3Int(0,1,0) //increment
+                ),
                 
-                //look over tilemap edge
-                int loopLimit = startingTilePosition.y + CONSTANTS.CHUNK_LENGTH;
-                for (int y = startingTilePosition.y; y < loopLimit; y++)
+                //top side
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x, currentChunk.Key.y + CONSTANTS.CHUNK_LENGTH),
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x, currentChunk.Key.y +  CONSTANTS.CHUNK_LENGTH),
+                    loopLimit: CONSTANTS.CHUNK_LENGTH,
+                    step: new Vector3Int(1,0,0)
+                ),
+                
+                //right side
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x + CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y),
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x + CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y),
+                    loopLimit: CONSTANTS.CHUNK_LENGTH,
+                    step: new Vector3Int(0,1,0)
+                ),
+                
+                //bottom side
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x, currentChunk.Key.y - CONSTANTS.CHUNK_LENGTH),
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x, currentChunk.Key.y - 1),
+                    loopLimit: CONSTANTS.CHUNK_LENGTH,
+                    step: new Vector3Int(1,0,0)
+                ),
+                    
+                //Top left
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x - CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y + CONSTANTS.CHUNK_LENGTH),
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x - 1, currentChunk.Key.y + CONSTANTS.CHUNK_LENGTH),
+                    loopLimit: 1,
+                    step: new Vector3Int(0,0,0)
+                ),
+                    
+                //Top Right
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x + CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y + CONSTANTS.CHUNK_LENGTH),
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x + CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y + CONSTANTS.CHUNK_LENGTH),
+                    loopLimit: 1,
+                    step: new Vector3Int(0,0,0)
+                ),
+                
+                //Bottom Left
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x - CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y - CONSTANTS.CHUNK_LENGTH),
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x - 1, currentChunk.Key.y - 1),
+                    loopLimit: 1,
+                    step: new Vector3Int(0,0,0)
+                ),
+                
+                //Bottom Right
+                (
+                    newChunkKey: new Vector3Int(currentChunk.Key.x + CONSTANTS.CHUNK_LENGTH, currentChunk.Key.y - CONSTANTS.CHUNK_LENGTH),
+                    startingChunkPosition: new Vector3Int(currentChunk.Key.x + CONSTANTS.CHUNK_LENGTH,  currentChunk.Key.y - 1),
+                    loopLimit: 1,
+                    step: new Vector3Int(0,0,0)
+                ),
+                 
+            };
+
+        //go through all checks, Top, bottom, left, right, TL, TR, BL, BR
+        foreach (var check in chunkChecks)
+        {
+            //check whether this outer chunk exists
+
+            if (chunks.TryGetValue(check.newChunkKey, out Tilemap newTilemap))
+            {
+                //loop through all tiles on this side
+                for (int i = 0; i < check.loopLimit; i++)
                 {
-                    Vector3Int positionToSetNewTile = new Vector3Int(startingTilePosition.x, y, 0);
-                    TileBase newTileBase = leftTileMap.GetTile(positionToSetNewTile);
+                    Vector3Int positionToSetNewTile = check.startingChunkPosition + (check.step * i);
+                    TileBase newTileBase = newTilemap.GetTile(positionToSetNewTile);
                     
                     //set tile
                     currentTileMap.SetTile(positionToSetNewTile, newTileBase);
-                    currentTileMap.SetColor(positionToSetNewTile, new Color(0,0,0,0));
-                }
-            }
-            
-            //top side *******************************************************************
-            //create key for chunk we want to check
-            newKey = new Vector3Int(chunk.Key.x, chunk.Key.y + CONSTANTS.CHUNK_LENGTH);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap topTileMap))
-            {
-                //if contains, create starting position
-                Vector3Int startingTilePosition = new Vector3Int(chunk.Key.x, newKey.y);
-                
-                //look over tilemap edge
-                int loopLimit = startingTilePosition.x + CONSTANTS.CHUNK_LENGTH;
-                for (int x = startingTilePosition.x; x < loopLimit; x++)
-                {
-                    Vector3Int positionToSetNewTile = new Vector3Int(x,startingTilePosition.y, 0);
-                    TileBase newTileBase = topTileMap.GetTile(positionToSetNewTile);
                     
-                    //set tile
-                    currentTileMap.SetTile(positionToSetNewTile, newTileBase);
+                    //turn invisable
                     currentTileMap.SetColor(positionToSetNewTile, new Color(0,0,0,0));
                 }
-            }
-            
-            //right side *******************************************************************
-            //create key for chunk we want to check
-            newKey = new Vector3Int(chunk.Key.x + CONSTANTS.CHUNK_LENGTH, chunk.Key.y);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap rightTileMap))
-            {
-                //if contains, create starting position
-                Vector3Int startingTilePosition = new Vector3Int(newKey.x, newKey.y);
-                
-                //look over tilemap edge
-                int loopLimit = startingTilePosition.y + CONSTANTS.CHUNK_LENGTH;
-                for (int y = startingTilePosition.y; y < loopLimit; y++)
-                {
-                    Vector3Int positionToSetNewTile = new Vector3Int(startingTilePosition.x, y, 0);
-                    TileBase newTileBase = rightTileMap.GetTile(positionToSetNewTile);
-                    
-                    //set tile
-                    currentTileMap.SetTile(positionToSetNewTile, newTileBase);
-                    currentTileMap.SetColor(positionToSetNewTile, new Color(0,0,0,0));
-                }
-            }
-            
-            //Bottom side *******************************************************************
-            //create key for chunk we want to check
-            newKey = new Vector3Int(chunk.Key.x, chunk.Key.y - CONSTANTS.CHUNK_LENGTH);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap bottomTileMap))
-            {
-                //if contains, create starting position
-                Vector3Int startingTilePosition = new Vector3Int(chunk.Key.x, chunk.Key.y - 1);
-                
-                //look over tilemap edge
-                int loopLimit = startingTilePosition.x + CONSTANTS.CHUNK_LENGTH;
-                for (int x = startingTilePosition.x; x < loopLimit; x++)
-                {
-                    Vector3Int positionToSetNewTile = new Vector3Int(x,startingTilePosition.y, 0);
-                    TileBase newTileBase = bottomTileMap.GetTile(positionToSetNewTile);
-                    
-                    //set tile
-                    currentTileMap.SetTile(positionToSetNewTile, newTileBase);
-                    currentTileMap.SetColor(positionToSetNewTile, new Color(0,0,0,0));
-                }
-            }
-            
-            //top left *******************************************************************
-            //create key for chunk we want to check
-            newKey = new Vector3Int(chunk.Key.x - CONSTANTS.CHUNK_LENGTH, chunk.Key.y + CONSTANTS.CHUNK_LENGTH);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap topLeftTileMap))
-            {
-                Vector3Int tilePosition = new Vector3Int(chunk.Key.x - 1, newKey.y);
-                
-                //set tile
-                TileBase newTileBase = topLeftTileMap.GetTile(tilePosition);
-                currentTileMap.SetTile(tilePosition, newTileBase);
-                currentTileMap.SetColor(tilePosition, new Color(0,0,0,0));
-            }
-            
-            //top top right *******************************************************************
-            //create key for chunk we want to check
-            newKey = new Vector3Int(chunk.Key.x + CONSTANTS.CHUNK_LENGTH, chunk.Key.y + CONSTANTS.CHUNK_LENGTH);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap topRightTileMap))
-            {
-                Vector3Int tilePosition = new Vector3Int(newKey.x, newKey.y);
-                
-                //set tile
-                TileBase newTileBase = topRightTileMap.GetTile(tilePosition);
-                currentTileMap.SetTile(tilePosition, newTileBase);
-                currentTileMap.SetColor(tilePosition, new Color(0,0,0,0));
-            }
-            
-            // Bottom Left *******************************************************************
-            //create key for chunk we want to check
-            newKey = new Vector3Int(chunk.Key.x - CONSTANTS.CHUNK_LENGTH, chunk.Key.y - CONSTANTS.CHUNK_LENGTH);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap bottomLeftTileMap))
-            {
-                Vector3Int tilePosition = new Vector3Int(chunk.Key.x - 1, chunk.Key.y - 1);
-                
-                //set tile
-                TileBase newTileBase = bottomLeftTileMap.GetTile(tilePosition);
-                currentTileMap.SetTile(tilePosition, newTileBase);
-                currentTileMap.SetColor(tilePosition, new Color(0,0,0,0));
-            }
-            
-            // Bottom Right *******************************************************************
-            //create key for chunk we want to check
-            newKey = new Vector3Int(chunk.Key.x + CONSTANTS.CHUNK_LENGTH, chunk.Key.y - CONSTANTS.CHUNK_LENGTH);
-            
-            //check if chunks contain this chunk
-            if (Chunks.TryGetValue(newKey, out Tilemap bottomRightTileMap))
-            {
-                Vector3Int tilePosition = new Vector3Int(newKey.x, chunk.Key.y - 1);
-                
-                //set tile
-                TileBase newTileBase = bottomRightTileMap.GetTile(tilePosition);
-                currentTileMap.SetTile(tilePosition, newTileBase);
-                currentTileMap.SetColor(tilePosition, new Color(0,0,0,0));
             }
         }
     }
 
-    public void UpdateChunkOuterLayer()
-    {
-        
-    }
 }

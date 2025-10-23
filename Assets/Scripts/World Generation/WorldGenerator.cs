@@ -29,7 +29,7 @@ public class WorldGenerator : MonoBehaviour
     public int bottomRowYPosition = 0;
     [HideInInspector] public int yOffset = 0;
     
-    //tilemap Chunks
+    //tilemap chunks
     protected TilemapChunkManager _chunkManager;
     [SerializeField] protected Transform _tilemapParent;
     protected NativeArray<int> tileTypeMap;
@@ -65,6 +65,9 @@ public class WorldGenerator : MonoBehaviour
 
     protected void CleanUp()
     {
+        //fix edges of rule tile tile chunks 
+        _chunkManager.WriteAllChunkOuterLayers(_width, _height);
+        
         tileTypeMap.Dispose();
     }
     
