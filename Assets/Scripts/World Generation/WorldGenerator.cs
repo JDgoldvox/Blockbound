@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Diagnostics;
+using Unity.Jobs;
 
 //HOW TO USE CLASS
 /// <summary>
@@ -71,7 +72,7 @@ public class WorldGenerator : MonoBehaviour
         tileTypeMap.Dispose();
     }
     
-    public void BuildTileMap(NativeArray<int> tileTypeMap)
+    public void BuildTileMap()
     {
         //main thread map build
         for (int i = 0; i < tileTypeMap.Length; i++)
@@ -90,25 +91,26 @@ public class WorldGenerator : MonoBehaviour
     }
     
     protected void OreFloodFill(
-        Vector2Int startPositionCoord,
-        NativeArray<int> tileTypeMap,
         int maxQuantityPerVein,
         float spreadChance,
         int spawnInsideMaterialID,
-        int oreMaterialID,
-        ref Unity.Mathematics.Random rng
+        int oreMaterialID
         )
     {
-        List<Vector2Int> tileCoordExplorationList = new List<Vector2Int>();
-        HashSet<Vector2Int> visitedTiles = new HashSet<Vector2Int>();
+        //generate random start position within the layer
+        int rngX = rng.NextInt(-_halfWidth, _halfWidth);
+        int rngY = rng.NextInt(-_halfHeight, _halfHeight);
+        Vector2Int startPosition = new Vector2Int(rngX, rngY);
         
-        tileCoordExplorationList.Add(startPositionCoord);
+        //set up data containers
+        List<Vector2Int> tileCoordExplorationList = new List<Vector2Int> { startPosition };
+        HashSet<Vector2Int> visitedTiles = new HashSet<Vector2Int>();
         int tileCount = 0;
         
-        while (tileCoordExplorationList.Count != 0) 
+        while (tileCoordExplorationList.Count != 0 && tileCount < maxQuantityPerVein) 
         {
             //Randomise a coordinate from the list
-            int nextRandomIndex = rng.NextInt(0, tileCoordExplorationList.Count - 1);
+            int nextRandomIndex = rng.NextInt(0, tileCoordExplorationList.Count);
             Vector2Int tilePos = tileCoordExplorationList[nextRandomIndex];
             tileCoordExplorationList.Remove(tileCoordExplorationList[nextRandomIndex]);
             
@@ -123,11 +125,6 @@ public class WorldGenerator : MonoBehaviour
             visitedTiles.Add(tilePos);
             tileTypeMap[TilemapConverter.CoordToIndex(tilePos, _width, _height)] = oreMaterialID; 
 
-            if (tileCount == maxQuantityPerVein)
-            {
-                break;
-            }
-                    
             //queue adjacent tiles that have spwanable tile
             var adjacentStoneTiles = TilemapUtils.ReturnSpecificAdjacentTiles(
                 tilePos,

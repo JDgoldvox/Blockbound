@@ -23,151 +23,110 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
     {
         PreGenerationTasks();
         
-        GenerateCaveLayer(tileTypeMap);
-        GenerateOreLayer(tileTypeMap, ref rng);
-        BuildTileMap(tileTypeMap);
+        GenerateCaveLayer();
+        GenerateOreLayer();
+        BuildTileMap();
         
         CleanUp();
     }
 
-    private void GenerateCaveLayer(NativeArray<int> tileTypeMap)
+    private void GenerateCaveLayer()
     {
         //Debug Caves
-        if (_caveSO.DebugFillWithMaterial)
+        var debugMaterialFillJob = new DebugMaterialFillJob()
         {
-            var debugMaterialFillJob = new DebugMaterialFillJob()
-            {
-                MaterialID = _stoneBlock.ID,
-                TileTypeMap = tileTypeMap
-            };
-
-            JobHandle debugMaterialFillHandle = default;
-            debugMaterialFillHandle = debugMaterialFillJob.ScheduleParallel(_totalBlocks, 128, debugMaterialFillHandle);
-            debugMaterialFillHandle.Complete();
-        }
+            MaterialID = _stoneBlock.ID,
+            TileTypeMap = tileTypeMap
+        };
+        JobUtils.ScheduleJobAndExecuteParallelFor(debugMaterialFillJob, _totalBlocks, _caveSO.DebugFillWithMaterial);
         
         // Base Stone Caves
-        if (_caveSO.EnableCaveBase)
+        var caveBaseJob = new WorldGenerationJobs.SimplexJob()
         {
-            var caveBaseJob = new WorldGenerationJobs.SimplexJob()
-            {
-                Width = _width,
-                Height = _height,
-                Frequency = _caveSO.CaveBaseFrequency,
-                Persistance = _caveSO.CaveBasePersistance,
-                Octaves = _caveSO.CaveBaseOctaves,
-                Amplitude = _caveSO.CaveBaseAmplitude,
-                FillChance = _caveSO.CaveBaseMaterialFillChance,
-                MaterialID = _stoneBlock.ID,
-                TileTypeMap = tileTypeMap
-            };
-
-            JobHandle caveBaseJobHandler = default;
-            caveBaseJobHandler = caveBaseJob.ScheduleParallelByRef(_totalBlocks, 128, caveBaseJobHandler);
-            caveBaseJobHandler.Complete();
-        }
-
+            Width = _width,
+            Height = _height,
+            Frequency = _caveSO.CaveBaseFrequency,
+            Persistance = _caveSO.CaveBasePersistance,
+            Octaves = _caveSO.CaveBaseOctaves,
+            Amplitude = _caveSO.CaveBaseAmplitude,
+            FillChance = _caveSO.CaveBaseMaterialFillChance,
+            MaterialID = _stoneBlock.ID,
+            TileTypeMap = tileTypeMap
+        };
+        JobUtils.ScheduleJobAndExecuteParallelFor(caveBaseJob, _totalBlocks, _caveSO.EnableCaveBase);
+        
         //Small Caves
-        if (_caveSO.EnableSmallCave)
+        var smallCaveJob = new WorldGenerationJobs.SimplexJob()
         {
-            var smallCaveJob = new WorldGenerationJobs.SimplexJob()
-            {
-                Width = _width,
-                Height = _height,
-                Frequency = _caveSO.SmallCaveFrequency,
-                Persistance = _caveSO.SmallCavePersistance,
-                Octaves =  _caveSO.SmallCaveOctaves,
-                Amplitude = _caveSO.SmallCaveAmplitude,
-                FillChance = _caveSO.SmallCaveFillChance,
-                MaterialID = _airBlock.ID,
-                TileTypeMap = tileTypeMap
-            };
-            
-            JobHandle smallCaveJobHandler = default;
-            smallCaveJobHandler = smallCaveJob.ScheduleParallelByRef(_totalBlocks, 120, smallCaveJobHandler);
-            smallCaveJobHandler.Complete();
-        }
-
-        if (_caveSO.EnableSmallCaveFill)
-        {
-            var smallCaveFillJob = new WorldGenerationJobs.SimplexJob()
-            {
-                Width = _width,
-                Height = _height,
-                Frequency = _caveSO.SmallCaveFillFrequency,
-                Persistance = _caveSO.SmallCaveFillPersistance,
-                Octaves = _caveSO.SmallCaveFillOctaves,
-                Amplitude = _caveSO.SmallCaveFillAmplitude,
-                FillChance = _caveSO.SmallCaveFillMaterialFillChance,
-                MaterialID = _stoneBlock.ID,
-                TileTypeMap = tileTypeMap
-            };
-
-            JobHandle smallCaveFillJobHandler = default;
-            smallCaveFillJobHandler = smallCaveFillJob.ScheduleParallelByRef(_totalBlocks, 120, smallCaveFillJobHandler);
-            smallCaveFillJobHandler.Complete();
-        }
+            Width = _width,
+            Height = _height,
+            Frequency = _caveSO.SmallCaveFrequency,
+            Persistance = _caveSO.SmallCavePersistance,
+            Octaves =  _caveSO.SmallCaveOctaves,
+            Amplitude = _caveSO.SmallCaveAmplitude,
+            FillChance = _caveSO.SmallCaveFillChance,
+            MaterialID = _airBlock.ID,
+            TileTypeMap = tileTypeMap
+        };
+        JobUtils.ScheduleJobAndExecuteParallelFor(smallCaveJob, _totalBlocks, _caveSO.EnableCaveBase);
         
-        if (_caveSO.EnableLargeCaveFill)
+        // Small Cave fill
+        var smallCaveFillJob = new WorldGenerationJobs.SimplexJob()
         {
-            var LargeCaveFillJob = new WorldGenerationJobs.SimplexJob()
-            {
-                Width = _width,
-                Height = _height,
-                Frequency = _caveSO.LargeCaveFillFrequency,
-                Persistance = _caveSO.LargeCaveFillPersistance,
-                Octaves = _caveSO.LargeCaveFillOctaves,
-                Amplitude = _caveSO.LargeCaveFillAmplitude,
-                FillChance = _caveSO.LargeCaveFillMaterialFillChance,
-                MaterialID = _stoneBlock.ID,
-                TileTypeMap = tileTypeMap
-            };
+            Width = _width,
+            Height = _height,
+            Frequency = _caveSO.SmallCaveFillFrequency,
+            Persistance = _caveSO.SmallCaveFillPersistance,
+            Octaves = _caveSO.SmallCaveFillOctaves,
+            Amplitude = _caveSO.SmallCaveFillAmplitude,
+            FillChance = _caveSO.SmallCaveFillMaterialFillChance,
+            MaterialID = _stoneBlock.ID,
+            TileTypeMap = tileTypeMap
+        };
+        JobUtils.ScheduleJobAndExecuteParallelFor(smallCaveFillJob, _totalBlocks, _caveSO.EnableCaveBase);
         
-            JobHandle LargeCaveFillJobHandler = default;
-            LargeCaveFillJobHandler = LargeCaveFillJob.ScheduleParallelByRef(_totalBlocks, 120, LargeCaveFillJobHandler);
-            LargeCaveFillJobHandler.Complete();
-        }
-        
-        if (_caveSO.EnableCavern)
+        // Large Cave fill 
+        var LargeCaveFillJob = new WorldGenerationJobs.SimplexJob()
         {
-            var cavernJob = new WorldGenerationJobs.WorleyJob()
-            {
-                Width = _width,
-                Height = _height,
-                Frequency = _caveSO.CavernFrequency,
-                Persistance = _caveSO.CavernPersistance,
-                Octaves = _caveSO.CavernOctaves,
-                Amplitude = _caveSO.CavernAmplitude,
-                fillChance = _caveSO.CavernChance,
-                MaterialNum = _airBlock.ID,
-                TileTypeMap = tileTypeMap
-            };
-
-            JobHandle cavernJobHandler = default;
-            cavernJobHandler = cavernJob.ScheduleParallelByRef(_totalBlocks, 120, cavernJobHandler);
-            cavernJobHandler.Complete();
-        }
+            Width = _width,
+            Height = _height,
+            Frequency = _caveSO.LargeCaveFillFrequency,
+            Persistance = _caveSO.LargeCaveFillPersistance,
+            Octaves = _caveSO.LargeCaveFillOctaves,
+            Amplitude = _caveSO.LargeCaveFillAmplitude,
+            FillChance = _caveSO.LargeCaveFillMaterialFillChance,
+            MaterialID = _stoneBlock.ID,
+            TileTypeMap = tileTypeMap
+        };
+        JobUtils.ScheduleJobAndExecuteParallelFor(LargeCaveFillJob, _totalBlocks, _caveSO.EnableCaveBase);
+        
+        //Caverns
+        var cavernJob = new WorldGenerationJobs.WorleyJob()
+        {
+            Width = _width,
+            Height = _height,
+            Frequency = _caveSO.CavernFrequency,
+            Persistance = _caveSO.CavernPersistance,
+            Octaves = _caveSO.CavernOctaves,
+            Amplitude = _caveSO.CavernAmplitude,
+            fillChance = _caveSO.CavernChance,
+            MaterialNum = _airBlock.ID,
+            TileTypeMap = tileTypeMap
+        };
+        JobUtils.ScheduleJobAndExecuteParallelFor(cavernJob, _totalBlocks, _caveSO.EnableCaveBase);
     }
     
-    private void GenerateOreLayer(NativeArray<int> tileTypeMap, ref Unity.Mathematics.Random rng)
+    private void GenerateOreLayer()
     {
         if (_oreSO.EnableCopper)
         {
             for (int i = 0; i < _oreSO.CopperLargeVeinQuantity; i++)
             {
-                //generate random start position within the layer
-                int rngX = rng.NextInt(-_halfWidth, _halfWidth);
-                int rngY = rng.NextInt(-_halfHeight, _halfHeight);
-                Vector2Int startPosition = new Vector2Int(rngX, rngY);
-                
                 OreFloodFill(
-                    startPosition,
-                    tileTypeMap,
                     _oreSO.CopperLargeVeinMaxTileQuantity,
                     _oreSO.CopperLargeVeinSpreadChance,
                     _stoneBlock.ID,
-                    _copperOreBlock.ID,
-                    ref rng
+                    _copperOreBlock.ID
                     );
             }
         }

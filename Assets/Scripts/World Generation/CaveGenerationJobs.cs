@@ -19,7 +19,7 @@ namespace WorldGenerationJobs
         }
     }
     
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public struct SimplexJob : IJobFor
     {
         [ReadOnly] public float Frequency;
@@ -45,7 +45,7 @@ namespace WorldGenerationJobs
         }
     }
     
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]
     public struct WorleyJob : IJobFor
     {
         [ReadOnly] public float Frequency;
@@ -72,7 +72,9 @@ namespace WorldGenerationJobs
         }
     }
     
-    [BurstCompile]
+    
+    
+    [BurstCompile(CompileSynchronously = true)]
     public struct OreFloodFill : IJobFor
     {
         public void Execute(int index)
@@ -80,4 +82,6 @@ namespace WorldGenerationJobs
             
         }
     }
+    
+    
 }
