@@ -26,8 +26,21 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
     {
         PreGenerationTasks();
         
+        //TEMP *******************************************
+        Stopwatch stopwatch = new Stopwatch(); 
+        stopwatch.Start();
         GenerateCaveLayer();
+        stopwatch.Stop();
+        Debug.Log("CAVE GEN: " + stopwatch.Elapsed.TotalSeconds + " seconds");
+        //TEMP *******************************************
+        stopwatch.Reset();
+        stopwatch.Start();
+        
         GenerateOreLayer();
+        stopwatch.Stop();
+        Debug.Log("ORE GEN: " + stopwatch.Elapsed.TotalSeconds + " seconds");
+        //TEMP *******************************************
+        
         BuildTileMap();
         
         CleanUp();
@@ -121,48 +134,20 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
     
     private void GenerateOreLayer()
     {
-        Stopwatch stopwatch = new Stopwatch(); 
-        stopwatch.Start();
+
         
         if (_oreSO.enableCopper)
         {
-            OreFloodFill(
-                maxQuantityPerVein: _oreSO.CopperLargeVeinMaxTileQuantity,
-                spreadChance: _oreSO.CopperLargeVeinSpreadChance,
-                oreVeinsNumber: _oreSO.CopperLargeVeinQuantity,
-                spawnMaterialID: _stoneBlock.ID,
-                oreMaterialID: _copperOreBlock.ID
-            );
+            for (int i = 0; i < _oreSO.CopperLargeVeinQuantity; i++)
+            {
+                OreFloodFill(
+                    _oreSO.CopperLargeVeinMaxTileQuantity,
+                    _oreSO.CopperLargeVeinSpreadChance,
+                    _stoneBlock.ID,
+                    _copperOreBlock.ID
+                ); 
+            }
         }
-        
-        
-        // if (_oreSO.enableCopper)
-        // {
-        //     for (int i = 0; i < _oreSO.CopperLargeVeinQuantity; i++)
-        //     {
-        //         OreFloodFillX(
-        //             _oreSO.CopperLargeVeinMaxTileQuantity,
-        //             _oreSO.CopperLargeVeinSpreadChance,
-        //             _stoneBlock.ID,
-        //             _copperOreBlock.ID
-        //         ); 
-        //     }
-        // }
-        
-        stopwatch.Stop();
-        Debug.Log("time: " + stopwatch.Elapsed.TotalSeconds + " seconds");
-        
-        // if (_oreSO.enableIron)
-        // {
-        //     for (int i = 0; i < _oreSO.CopperLargeVeinQuantity; i++)
-        //     {
-        //         OreFloodFill(
-        //             _oreSO.CopperLargeVeinMaxTileQuantity,
-        //             _oreSO.CopperLargeVeinSpreadChance,
-        //             _stoneBlock.ID,
-        //             _copperOreBlock.ID
-        //         );
-        //     }
-        // }
+ 
     }
 };

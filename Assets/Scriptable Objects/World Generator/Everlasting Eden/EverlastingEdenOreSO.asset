@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EverlastingEdenOreSO
   m_EditorClassIdentifier: 
   enableCopper: 1
-  CopperLargeVeinQuantity: 1000
+  CopperLargeVeinQuantity: 2000000
   CopperLargeVeinMaxTileQuantity: 20
   CopperLargeVeinSpreadChance: 0.7
   CopperSmallVeinQuantity: 1000

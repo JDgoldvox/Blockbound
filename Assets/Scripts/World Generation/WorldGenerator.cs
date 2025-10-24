@@ -91,7 +91,7 @@ public class WorldGenerator : MonoBehaviour
         }
     }
     
-    protected void OreFloodFillX(
+    protected void OreFloodFill(
         int maxQuantityPerVein,
         float spreadChance,
         int spawnInsideMaterialID,
@@ -157,58 +157,5 @@ public class WorldGenerator : MonoBehaviour
                 tileCoordExplorationList.Add(newTilePos);
             }
         }
-    }
-    
-    protected void OreFloodFill(
-        int maxQuantityPerVein,
-        float spreadChance,
-        int oreVeinsNumber,
-        int spawnMaterialID,
-        int oreMaterialID
-        )
-    {
-        //prepare for threads
-        NativeList<Vector2Int> newOreTilePositions = 
-            new NativeList<Vector2Int>(maxQuantityPerVein * oreVeinsNumber, Allocator.TempJob);
-        
-        //Generate random numbers that are on stone
-        NativeArray<int> randomXValue = new NativeArray<int>(oreVeinsNumber, Allocator.TempJob);
-        NativeArray<int> randomYValue = new NativeArray<int>(oreVeinsNumber, Allocator.TempJob);
-
-        for (int i = 0; i < oreVeinsNumber; i++)
-        {
-            randomXValue[i] =  rng.NextInt(-_halfWidth, _halfWidth);
-            randomYValue[i] =  rng.NextInt(-_halfHeight, _halfHeight);
-        }
-        
-        //create job
-        var oreFloodFillJob = new WorldGenerationJobs.OreFloodFillJob()
-        {
-            randomX = randomXValue,
-            randomY = randomYValue,
-            tileTypeMap = _tileTypeMap,
-            rng = rng,
-            width = _width,
-            height = _height,
-            maxQuantityPerVein = maxQuantityPerVein,
-            spawnMaterialID = spawnMaterialID,
-            spreadChance = spreadChance,
-            newOreTilePositions = newOreTilePositions.AsParallelWriter(),
-        };
-
-        JobHandle jobHandle = default;
-        jobHandle = oreFloodFillJob.ScheduleParallelByRef(oreVeinsNumber, 128, jobHandle);
-        jobHandle.Complete();
-        
-        //Add new ore to tilemap
-        foreach (var newTilePos in newOreTilePositions)
-        {
-            _tileTypeMap[TilemapConverter.CoordToIndex(newTilePos, _width, _height)] = oreMaterialID;
-        }
-        
-        //clean up
-        randomXValue.Dispose();
-        randomYValue.Dispose();
-        newOreTilePositions.Dispose();
     }
 }
