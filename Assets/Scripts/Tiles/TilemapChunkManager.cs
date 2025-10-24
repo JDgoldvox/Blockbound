@@ -54,6 +54,7 @@ public class TilemapChunkManager : MonoBehaviour
                  newTilemapObject.transform.parent = chunkParent;   
                  Tilemap newTilemapComponent = newTilemapObject.AddComponent<Tilemap>();
                  newTilemapObject.AddComponent<TilemapRenderer>();
+                // newTilemapObject.SetActive(false);
                  
                  //store chunk
                  chunks[new Vector3Int(col, row)] = newTilemapComponent;

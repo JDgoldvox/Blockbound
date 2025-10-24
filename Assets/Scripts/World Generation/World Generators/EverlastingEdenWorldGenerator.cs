@@ -24,12 +24,29 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
     
     public void GenerateWorld()
     {
-        PreGenerationTasks();
+        Stopwatch stopwatch = new Stopwatch(); 
         
         //TEMP *******************************************
-        Stopwatch stopwatch = new Stopwatch(); 
         stopwatch.Start();
+        
+        //fill lookup
+        _localTilebaseLookUp.Clear();
+        _localTilebaseLookUp.Add(_debugBlock.ID, _debugBlock);
+        _localTilebaseLookUp.Add(_airBlock.ID, _airBlock);
+        _localTilebaseLookUp.Add(_dirtBlock.ID, _dirtBlock);
+        _localTilebaseLookUp.Add(_stoneBlock.ID, _stoneBlock);
+        _localTilebaseLookUp.Add(_copperOreBlock.ID, _copperOreBlock);
+        
+        PreGenerationTasks();
+        
+        stopwatch.Stop();
+        Debug.Log("PREP: " + stopwatch.Elapsed.TotalSeconds + " seconds");
+        //TEMP *******************************************
+        stopwatch.Reset();
+        stopwatch.Start();
+        
         GenerateCaveLayer();
+        
         stopwatch.Stop();
         Debug.Log("CAVE GEN: " + stopwatch.Elapsed.TotalSeconds + " seconds");
         //TEMP *******************************************
@@ -37,13 +54,26 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
         stopwatch.Start();
         
         GenerateOreLayer();
+        
         stopwatch.Stop();
         Debug.Log("ORE GEN: " + stopwatch.Elapsed.TotalSeconds + " seconds");
         //TEMP *******************************************
         
+        stopwatch.Reset();
+        stopwatch.Start();
+        
         BuildTileMap();
         
+        stopwatch.Stop();
+        Debug.Log("Build time: " + stopwatch.Elapsed.TotalSeconds + " seconds");
+        
+        //TEMP *******************************************
+        stopwatch.Reset();
+        stopwatch.Start();
+        
         CleanUp();
+        stopwatch.Stop();
+        Debug.Log("cleanup: " + stopwatch.Elapsed.TotalSeconds + " seconds");
     }
 
     private void GenerateCaveLayer()

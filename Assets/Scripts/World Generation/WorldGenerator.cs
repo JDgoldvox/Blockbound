@@ -37,8 +37,12 @@ public class WorldGenerator : MonoBehaviour
     protected NativeArray<int> _tileTypeMap;
     protected Unity.Mathematics.Random rng;
     
+    //tilemap lookup
+    protected Dictionary<int, BlockItemSO> _localTilebaseLookUp;
+    
     private void Awake()
     {
+        _localTilebaseLookUp = new Dictionary<int, BlockItemSO>();
         _chunkManager = _tilemapParent.AddComponent<TilemapChunkManager>();
     }
 
@@ -81,13 +85,8 @@ public class WorldGenerator : MonoBehaviour
             Vector2Int coord = TilemapConverter.IndexToCoord(i, _width, _height);
             int tileID = _tileTypeMap[i];
             Vector3Int tilePos = new Vector3Int(coord.x, coord.y + yOffset, 0);
-            
-            //get tilemap from spacially quantized world
             Tilemap _tilemap = _chunkManager.ReturnChunkAtPosition(tilePos, bottomRowYPosition);
-            
-            ItemSO item = ItemFinder.instance.IDToItem(tileID);
-            BlockItemSO blockItem = item as BlockItemSO;
-            _tilemap.SetTile(tilePos, blockItem.tileBase);
+            _tilemap.SetTile(tilePos, _localTilebaseLookUp[tileID].tileBase);
         }
     }
     
