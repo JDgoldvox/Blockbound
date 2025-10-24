@@ -1,8 +1,11 @@
+using System.Timers;
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using WorldGenerationJobs;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 [BurstCompile]
 public class EverlastingEdenWorldGenerator : WorldGenerator
@@ -36,7 +39,7 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
         var debugMaterialFillJob = new DebugMaterialFillJob()
         {
             MaterialID = _stoneBlock.ID,
-            TileTypeMap = tileTypeMap
+            TileTypeMap = _tileTypeMap
         };
         JobUtils.ScheduleJobAndExecuteParallelFor(debugMaterialFillJob, _totalBlocks, _caveSO.DebugFillWithMaterial);
         
@@ -51,7 +54,7 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
             Amplitude = _caveSO.CaveBaseAmplitude,
             FillChance = _caveSO.CaveBaseMaterialFillChance,
             MaterialID = _stoneBlock.ID,
-            TileTypeMap = tileTypeMap
+            TileTypeMap = _tileTypeMap
         };
         JobUtils.ScheduleJobAndExecuteParallelFor(caveBaseJob, _totalBlocks, _caveSO.EnableCaveBase);
         
@@ -66,7 +69,7 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
             Amplitude = _caveSO.SmallCaveAmplitude,
             FillChance = _caveSO.SmallCaveFillChance,
             MaterialID = _airBlock.ID,
-            TileTypeMap = tileTypeMap
+            TileTypeMap = _tileTypeMap
         };
         JobUtils.ScheduleJobAndExecuteParallelFor(smallCaveJob, _totalBlocks, _caveSO.EnableCaveBase);
         
@@ -81,7 +84,7 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
             Amplitude = _caveSO.SmallCaveFillAmplitude,
             FillChance = _caveSO.SmallCaveFillMaterialFillChance,
             MaterialID = _stoneBlock.ID,
-            TileTypeMap = tileTypeMap
+            TileTypeMap = _tileTypeMap
         };
         JobUtils.ScheduleJobAndExecuteParallelFor(smallCaveFillJob, _totalBlocks, _caveSO.EnableCaveBase);
         
@@ -96,7 +99,7 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
             Amplitude = _caveSO.LargeCaveFillAmplitude,
             FillChance = _caveSO.LargeCaveFillMaterialFillChance,
             MaterialID = _stoneBlock.ID,
-            TileTypeMap = tileTypeMap
+            TileTypeMap = _tileTypeMap
         };
         JobUtils.ScheduleJobAndExecuteParallelFor(LargeCaveFillJob, _totalBlocks, _caveSO.EnableCaveBase);
         
@@ -111,24 +114,55 @@ public class EverlastingEdenWorldGenerator : WorldGenerator
             Amplitude = _caveSO.CavernAmplitude,
             fillChance = _caveSO.CavernChance,
             MaterialNum = _airBlock.ID,
-            TileTypeMap = tileTypeMap
+            TileTypeMap = _tileTypeMap
         };
         JobUtils.ScheduleJobAndExecuteParallelFor(cavernJob, _totalBlocks, _caveSO.EnableCaveBase);
     }
     
     private void GenerateOreLayer()
     {
-        if (_oreSO.EnableCopper)
+        Stopwatch stopwatch = new Stopwatch(); 
+        stopwatch.Start();
+        
+        if (_oreSO.enableCopper)
         {
-            for (int i = 0; i < _oreSO.CopperLargeVeinQuantity; i++)
-            {
-                OreFloodFill(
-                    _oreSO.CopperLargeVeinMaxTileQuantity,
-                    _oreSO.CopperLargeVeinSpreadChance,
-                    _stoneBlock.ID,
-                    _copperOreBlock.ID
-                    );
-            }
+            OreFloodFill(
+                maxQuantityPerVein: _oreSO.CopperLargeVeinMaxTileQuantity,
+                spreadChance: _oreSO.CopperLargeVeinSpreadChance,
+                oreVeinsNumber: _oreSO.CopperLargeVeinQuantity,
+                spawnMaterialID: _stoneBlock.ID,
+                oreMaterialID: _copperOreBlock.ID
+            );
         }
+        
+        
+        // if (_oreSO.enableCopper)
+        // {
+        //     for (int i = 0; i < _oreSO.CopperLargeVeinQuantity; i++)
+        //     {
+        //         OreFloodFillX(
+        //             _oreSO.CopperLargeVeinMaxTileQuantity,
+        //             _oreSO.CopperLargeVeinSpreadChance,
+        //             _stoneBlock.ID,
+        //             _copperOreBlock.ID
+        //         ); 
+        //     }
+        // }
+        
+        stopwatch.Stop();
+        Debug.Log("time: " + stopwatch.Elapsed.TotalSeconds + " seconds");
+        
+        // if (_oreSO.enableIron)
+        // {
+        //     for (int i = 0; i < _oreSO.CopperLargeVeinQuantity; i++)
+        //     {
+        //         OreFloodFill(
+        //             _oreSO.CopperLargeVeinMaxTileQuantity,
+        //             _oreSO.CopperLargeVeinSpreadChance,
+        //             _stoneBlock.ID,
+        //             _copperOreBlock.ID
+        //         );
+        //     }
+        // }
     }
 };

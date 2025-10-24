@@ -4,7 +4,7 @@ using UnityEngine;
 public class EverlastingEdenOreSO : ScriptableObject
 {
     [Header("Copper-----------------------------------------------------------------------------")] 
-    public bool EnableCopper;
+    public bool enableCopper;
     [Header("Large Vein")] 
     public int CopperLargeVeinQuantity;
     public int CopperLargeVeinMaxTileQuantity;
@@ -16,6 +16,6 @@ public class EverlastingEdenOreSO : ScriptableObject
     public float CopperSmallVeinSpreadChance;
     
     [Header("Iron")] 
-    public bool _enableIron;
+    public bool enableIron;
     public int IronQuantity;
 }

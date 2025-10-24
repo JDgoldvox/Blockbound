@@ -1074,7 +1074,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _chunkHalfWidth: 5
   _chunkHalfHeight: 5
-  bottomRowYPosition: 3
+  bottomRowYPosition: 0
   yOffset: 0
   _tilemapParent: {fileID: 844926023}
   _caveSO: {fileID: 11400000, guid: 7c48b32f56b8b3448b70f63d31231382, type: 2}

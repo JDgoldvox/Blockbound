@@ -12,32 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77494877bd7ab8644abdc4163b37c366, type: 3}
   m_Name: EverlastingEdenCaveSO
   m_EditorClassIdentifier: 
-  DebugFillWithMaterial: 0
-  EnableCaveBase: 1
+  DebugFillWithMaterial: 1
+  EnableCaveBase: 0
   CaveBaseFrequency: 0.015
   CaveBasePersistance: 0.8
   CaveBaseOctaves: 3
   CaveBaseAmplitude: 0.8
   CaveBaseMaterialFillChance: 0.8
-  EnableSmallCave: 1
+  EnableSmallCave: 0
   SmallCaveFrequency: 0.05
   SmallCavePersistance: 0.7
   SmallCaveOctaves: 2
   SmallCaveAmplitude: 0.8
   SmallCaveFillChance: 0.6
-  EnableCavern: 1
+  EnableCavern: 0
   CavernFrequency: 0.005
   CavernPersistance: 1
   CavernOctaves: 2
   CavernAmplitude: 1
   CavernChance: 0.8
-  EnableSmallCaveFill: 1
+  EnableSmallCaveFill: 0
   SmallCaveFillFrequency: 0.02
   SmallCaveFillPersistance: 0.1
   SmallCaveFillOctaves: 1
   SmallCaveFillAmplitude: 1.1
   SmallCaveFillMaterialFillChance: 0.4
-  EnableLargeCaveFill: 1
+  EnableLargeCaveFill: 0
   LargeCaveFillFrequency: 0.004
   LargeCaveFillPersistance: 2
   LargeCaveFillOctaves: 1

@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Diagnostics;
 using Unity.Jobs;
+using WorldGenerationJobs;
 
 //HOW TO USE CLASS
 /// <summary>
@@ -33,7 +34,7 @@ public class WorldGenerator : MonoBehaviour
     //tilemap chunks
     protected TilemapChunkManager _chunkManager;
     [SerializeField] protected Transform _tilemapParent;
-    protected NativeArray<int> tileTypeMap;
+    protected NativeArray<int> _tileTypeMap;
     protected Unity.Mathematics.Random rng;
     
     private void Awake()
@@ -61,7 +62,7 @@ public class WorldGenerator : MonoBehaviour
         _chunkManager.InitChunks(_width, _height, bottomRowYPosition, _tilemapParent);
         
         //init tile map
-        tileTypeMap = new NativeArray<int>(_totalBlocks, Allocator.TempJob);
+        _tileTypeMap = new NativeArray<int>(_totalBlocks, Allocator.TempJob);
     }
 
     protected void CleanUp()
@@ -69,16 +70,16 @@ public class WorldGenerator : MonoBehaviour
         //fix edges of rule tile tile chunks 
         _chunkManager.WriteAllChunkOuterLayers(_width, _height);
         
-        tileTypeMap.Dispose();
+        _tileTypeMap.Dispose();
     }
     
     public void BuildTileMap()
     {
         //main thread map build
-        for (int i = 0; i < tileTypeMap.Length; i++)
+        for (int i = 0; i < _tileTypeMap.Length; i++)
         {
             Vector2Int coord = TilemapConverter.IndexToCoord(i, _width, _height);
-            int tileID = tileTypeMap[i];
+            int tileID = _tileTypeMap[i];
             Vector3Int tilePos = new Vector3Int(coord.x, coord.y + yOffset, 0);
             
             //get tilemap from spacially quantized world
@@ -90,7 +91,7 @@ public class WorldGenerator : MonoBehaviour
         }
     }
     
-    protected void OreFloodFill(
+    protected void OreFloodFillX(
         int maxQuantityPerVein,
         float spreadChance,
         int spawnInsideMaterialID,
@@ -115,7 +116,7 @@ public class WorldGenerator : MonoBehaviour
             tileCoordExplorationList.Remove(tileCoordExplorationList[nextRandomIndex]);
             
             //if this position is not a spawnable block
-            if (!TilemapUtils.IsSpecificTile(tilePos, spawnInsideMaterialID, tileTypeMap, _width, _height))
+            if (!TilemapUtils.IsSpecificTile(tilePos, spawnInsideMaterialID, _tileTypeMap, _width, _height))
             {
                 continue;
             }
@@ -123,13 +124,13 @@ public class WorldGenerator : MonoBehaviour
             //if reached max tiles for this ore vein, return
             tileCount++;
             visitedTiles.Add(tilePos);
-            tileTypeMap[TilemapConverter.CoordToIndex(tilePos, _width, _height)] = oreMaterialID; 
+            _tileTypeMap[TilemapConverter.CoordToIndex(tilePos, _width, _height)] = oreMaterialID; 
 
             //queue adjacent tiles that have spwanable tile
             var adjacentStoneTiles = TilemapUtils.ReturnSpecificAdjacentTiles(
                 tilePos,
                 spawnInsideMaterialID,
-                tileTypeMap,
+                _tileTypeMap,
                 _height,
                 _width
                 );
@@ -156,5 +157,58 @@ public class WorldGenerator : MonoBehaviour
                 tileCoordExplorationList.Add(newTilePos);
             }
         }
+    }
+    
+    protected void OreFloodFill(
+        int maxQuantityPerVein,
+        float spreadChance,
+        int oreVeinsNumber,
+        int spawnMaterialID,
+        int oreMaterialID
+        )
+    {
+        //prepare for threads
+        NativeList<Vector2Int> newOreTilePositions = 
+            new NativeList<Vector2Int>(maxQuantityPerVein * oreVeinsNumber, Allocator.TempJob);
+        
+        //Generate random numbers that are on stone
+        NativeArray<int> randomXValue = new NativeArray<int>(oreVeinsNumber, Allocator.TempJob);
+        NativeArray<int> randomYValue = new NativeArray<int>(oreVeinsNumber, Allocator.TempJob);
+
+        for (int i = 0; i < oreVeinsNumber; i++)
+        {
+            randomXValue[i] =  rng.NextInt(-_halfWidth, _halfWidth);
+            randomYValue[i] =  rng.NextInt(-_halfHeight, _halfHeight);
+        }
+        
+        //create job
+        var oreFloodFillJob = new WorldGenerationJobs.OreFloodFillJob()
+        {
+            randomX = randomXValue,
+            randomY = randomYValue,
+            tileTypeMap = _tileTypeMap,
+            rng = rng,
+            width = _width,
+            height = _height,
+            maxQuantityPerVein = maxQuantityPerVein,
+            spawnMaterialID = spawnMaterialID,
+            spreadChance = spreadChance,
+            newOreTilePositions = newOreTilePositions.AsParallelWriter(),
+        };
+
+        JobHandle jobHandle = default;
+        jobHandle = oreFloodFillJob.ScheduleParallelByRef(oreVeinsNumber, 128, jobHandle);
+        jobHandle.Complete();
+        
+        //Add new ore to tilemap
+        foreach (var newTilePos in newOreTilePositions)
+        {
+            _tileTypeMap[TilemapConverter.CoordToIndex(newTilePos, _width, _height)] = oreMaterialID;
+        }
+        
+        //clean up
+        randomXValue.Dispose();
+        randomYValue.Dispose();
+        newOreTilePositions.Dispose();
     }
 }

@@ -139,5 +139,92 @@ public static class TilemapUtils
         return adjacentTiles;
     }
     
+    public static NativeList<Vector2Int> ReturnSpecificAdjacentTilesParallel(Vector2Int centreTilePosition, int tileID, NativeArray<int> tileTypeMap, int height, int width)
+    {
+        NativeList<Vector2Int> adjacentTiles = new NativeList<Vector2Int>(Allocator.Temp);
+        int halfWidth = width / 2;
+
+        //top left
+        Vector2Int newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y + 1);
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        //top middle
+        newTilePos = new Vector2Int(centreTilePosition.x, centreTilePosition.y + 1);
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        //top right
+        newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y + 1);
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        //middle left
+        newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y);
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        //middle right
+        newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y);
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        //bottom left
+        newTilePos = new Vector2Int(centreTilePosition.x - 1, centreTilePosition.y - 1);
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        //bottom middle
+        newTilePos = new Vector2Int(centreTilePosition.x, centreTilePosition.y - 1);
+        if (!IsOutOfBounds(newTilePos, width, height, -0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        //bottom right
+            newTilePos = new Vector2Int(centreTilePosition.x + 1, centreTilePosition.y - 1);
+        if (!IsOutOfBounds(newTilePos, width, height, 0))
+        {
+            if (IsSpecificTile(newTilePos, tileID, tileTypeMap, width, height))
+            {
+                adjacentTiles.Add(newTilePos);
+            }
+        }
+        
+        return adjacentTiles;
+    }
     
 }

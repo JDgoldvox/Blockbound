@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d95ff7dd4613cf845805487ccaf53933, type: 3}
   m_Name: EverlastingEdenOreSO
   m_EditorClassIdentifier: 
-  EnableCopper: 1
+  enableCopper: 1
   CopperLargeVeinQuantity: 1000
   CopperLargeVeinMaxTileQuantity: 20
   CopperLargeVeinSpreadChance: 0.7
-  CopperSmallVeinQuantity: 0
-  CopperSmallVeinMaxTileQuantity: 0
-  CopperSmallVeinSpreadChance: 0
-  _enableIron: 0
+  CopperSmallVeinQuantity: 1000
+  CopperSmallVeinMaxTileQuantity: 10
+  CopperSmallVeinSpreadChance: 0.7
+  enableIron: 0
   IronQuantity: 0
